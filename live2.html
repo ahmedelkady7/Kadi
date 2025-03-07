@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>قنوات البث المباشر</title>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Cairo', sans-serif;
+        }
+
+        body {
+            background: #181C25;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden; /* منع التمرير العام */
+        }
+
+        /* المشغل والشريط في كتلة واحدة */
+        .video-container {
+            width: 100%;
+            max-width: 700px;
+            position: relative;
+        }
+
+        video {
+            width: 100%;
+            height: 300px; /* ضبط الارتفاع ليكون متناسبًا */
+            background: black;
+        }
+
+        /* شريط المعلومات */
+        #channelInfo {
+            width: 100%;
+            max-width: 700px;
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            background: linear-gradient(45deg, #194643, #202731);
+            color: white;
+        }
+
+        #channelInfo img {
+            width: 60px;
+            height: 60px;
+            border-radius: 10px;
+            border: 2px solid white;
+            margin-right: 10px;
+        }
+
+        #channelText {
+            text-align: left;
+        }
+
+        #channelName {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        #channelCategory {
+            font-size: 16px;
+            opacity: 0.8;
+        }
+
+        /* قائمة القنوات */
+        .list-container {
+            width: 100%;
+            max-width: 700px;
+            flex: 1;
+            overflow-y: auto;
+            background: #181C25;
+        }
+
+        .list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            cursor: pointer;
+            transition: background 0.3s;
+            color: white;
+        }
+
+        .item:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .item img {
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            margin-right: 10px;
+            border: 2px solid white;
+        }
+
+        .item span {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        /* جعل الصفحة بأكملها مرنة */
+        .container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            width: 100%;
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- مشغل الفيديو -->
+        <div class="video-container">
+            <video id="videoPlayer" controls autoplay></video>
+        </div>
+
+        <!-- شريط المعلومات -->
+        <div id="channelInfo">
+            <img id="channelImage" src="" alt="صورة القناة">
+            <div id="channelText">
+                <div id="channelName">اسم القناة</div>
+                <div id="channelCategory">تصنيف القناة</div>
+            </div>
+        </div>
+
+        <!-- قائمة القنوات -->
+        <div class="list-container">
+            <ul id="channelList" class="list"></ul>
+        </div>
+    </div>
+
+    <script>
+        // إعداد Firebase
+        const firebaseConfig = {
+            apiKey: "AlzaSyAI21TvGX8jjTbEIDww5GEKcxM9zL6Gkn8",
+            authDomain: "ak-sport-a985e.firebaseapp.com",
+            databaseURL: "https://ak-sport-a985e-default-rtdb.firebaseio.com/",
+            projectId: "ak-sport-a985e",
+            appId: "1:922662521404:android:be257019ae9c69f6ddd139"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database().ref("ak_tv_2");
+
+        let firstChannel = null;
+
+        // جلب البيانات
+        db.once("value")
+            .then(snapshot => {
+                console.log("البيانات المسترجعة:", snapshot.val());
+                const data = snapshot.val();
+                if (!data) {
+                    alert("لا توجد بيانات!");
+                    return;
+                }
+
+                const list = document.getElementById("channelList");
+                list.innerHTML = "";
+
+                Object.keys(data).forEach((key, index) => {
+                    const item = data[key];
+
+                    if (index === 0) {
+                        firstChannel = item;
+                    }
+
+                    const li = document.createElement("li");
+                    li.className = "item";
+                    li.innerHTML = `<img src="${item.img}" alt="${item.name}"> <span>${item.name}</span>`;
+                    li.onclick = () => playStream(item);
+                    list.appendChild(li);
+                });
+
+                if (firstChannel) {
+                    playStream(firstChannel);
+                }
+            })
+            .catch(error => {
+                console.error("خطأ في جلب البيانات:", error);
+                alert("فشل تحميل البيانات!");
+            });
+
+        function playStream(channel) {
+            const player = document.getElementById("videoPlayer");
+            player.src = channel.url;
+            player.play();
+
+            document.getElementById("channelImage").src = channel.img;
+            document.getElementById("channelName").textContent = channel.name;
+            document.getElementById("channelCategory").textContent = channel.category;
+        }
+    </script>
+
+</body>
+</html>
