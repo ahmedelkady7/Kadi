@@ -26,6 +26,12 @@
         }
 
         h1 {
+            margin-bottom: 5px;
+        }
+
+        #movieName {
+            font-size: 18px;
+            color: #BBB;
             margin-bottom: 20px;
         }
 
@@ -44,6 +50,7 @@
             cursor: pointer;
             transition: transform 0.3s ease-in-out;
             text-align: center;
+            padding: 10px;
         }
 
         .episode-item:hover {
@@ -67,6 +74,8 @@
 <body>
 
     <h1>قائمة الحلقات</h1>
+    <p id="movieName"></p>  <!-- ✅ تم إضافة اسم الفيلم هنا -->
+
     <div class="episode-container" id="episodesList"></div>
 
     <script>
@@ -81,7 +90,6 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
-        // الحصول على ID من الرابط
         const urlParams = new URLSearchParams(window.location.search);
         const movieId = urlParams.get("id");
 
@@ -91,22 +99,31 @@
             db.ref(`film/${movieId}`).once("value").then(snapshot => {
                 const movieData = snapshot.val();
 
+                console.log("البيانات المسترجعة:", movieData);
+
                 if (!movieData || !movieData.data) {
                     alert("لا توجد حلقات متاحة!");
                     return;
                 }
 
+                // ✅ إظهار اسم الفيلم تحت عنوان "قائمة الحلقات"
+                document.getElementById("movieName").innerText = movieData.name || "اسم غير متوفر";
+
                 const episodesList = document.getElementById("episodesList");
                 episodesList.innerHTML = "";
 
-                // تحويل `data` إلى مصفوفة إذا لم تكن كذلك
                 const episodesArray = Object.values(movieData.data);
 
                 episodesArray.forEach(episode => {
+                    if (!episode || !episode.img || !episode.name || !episode.url) {
+                        console.warn("تم العثور على عنصر غير مكتمل:", episode);
+                        return;
+                    }
+
                     const episodeDiv = document.createElement("div");
                     episodeDiv.className = "episode-item";
                     episodeDiv.innerHTML = `
-                        <img src="${episode.img}" alt="${episode.name}">
+                        <img src="${episode.img}" alt="صورة الحلقة">
                         <div class="episode-name">${episode.name}</div>
                     `;
 
@@ -116,6 +133,8 @@
 
                     episodesList.appendChild(episodeDiv);
                 });
+
+                console.log("تم جلب الحلقات بنجاح!");
             }).catch(error => {
                 console.error("خطأ في جلب البيانات:", error);
                 alert("فشل تحميل البيانات!");
