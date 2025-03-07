@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تفاصيل الفيلم</title>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Cairo', sans-serif;
+        }
+
+        body {
+            background: #181C25;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .movie-container {
+            max-width: 600px;
+            margin: auto;
+        }
+
+        img {
+            width: 100%;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+
+        .description {
+            background: #202731;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: right;
+        }
+    </style>
+</head>
+<body>
+
+    <h1 id="movieTitle">تحميل...</h1>
+    <div class="movie-container">
+        <img id="movieImg" src="" alt="الصورة غير متاحة">
+        <div class="description" id="movieDescription">جارِ التحميل...</div>
+    </div>
+
+    <script>
+        // إعداد Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyAI21TvGX8jjTbEIDww5GEKcxM9zL6Gkn8",
+            authDomain: "ak-sport-a985e.firebaseapp.com",
+            databaseURL: "https://ak-sport-a985e-default-rtdb.firebaseio.com/",
+            projectId: "ak-sport-a985e",
+            appId: "1:922662521404:android:be257019ae9c69f6ddd139"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database().ref().child("film");
+
+        // استخراج معرف الفيلم من الـ URL
+        const params = new URLSearchParams(window.location.search);
+        const movieId = params.get("id");
+
+        if (!movieId) {
+            alert("معرف الفيلم غير موجود!");
+        } else {
+            // جلب بيانات الفيلم
+            db.child(movieId).once("value")
+                .then(snapshot => {
+                    if (!snapshot.exists()) {
+                        alert("لم يتم العثور على الفيلم!");
+                        return;
+                    }
+
+                    const movie = snapshot.val();
+
+                    // عرض البيانات في الصفحة
+                    document.getElementById("movieTitle").textContent = movie.name || "اسم غير متاح";
+                    document.getElementById("movieImg").src = movie.img || "";
+                    document.getElementById("movieDescription").textContent = movie.description || "لا يوجد وصف.";
+                })
+                .catch(error => {
+                    console.error("خطأ في جلب البيانات:", error);
+                    alert("فشل تحميل بيانات الفيلم!");
+                });
+        }
+    </script>
+
+</body>
+</html>
