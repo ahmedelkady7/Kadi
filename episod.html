@@ -4,8 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>تفاصيل الفيلم</title>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');
 
@@ -66,7 +64,6 @@
         .episode-item:hover {
             background: #333C47;
         }
-
     </style>
 </head>
 <body>
@@ -83,50 +80,31 @@
     </div>
 
     <script>
-        const firebaseConfig = {
-            apiKey: "AIzaSyAI21TvGX8jjTbEIDww5GEKcxM9zL6Gkn8",
-            authDomain: "ak-sport-a985e.firebaseapp.com",
-            databaseURL: "https://ak-sport-a985e-default-rtdb.firebaseio.com/",
-            projectId: "ak-sport-a985e",
-            appId: "1:922662521404:android:be257019ae9c69f6ddd139"
-        };
-
-        firebase.initializeApp(firebaseConfig);
         const urlParams = new URLSearchParams(window.location.search);
         const movieId = urlParams.get("id");
+        const movieName = urlParams.get("name");
+        const movieImg = urlParams.get("img");
+        const movieAbout = urlParams.get("about");
+        const movieData = JSON.parse(urlParams.get("data") || "[]");
 
-        if (!movieId) {
-            alert("فشل العثور على الفيلم!");
-            window.location.href = "index.html";
+        document.getElementById("movieTitle").textContent = movieName;
+        document.getElementById("movieImg").src = movieImg;
+        document.getElementById("movieDescription").textContent = movieAbout || "لا يوجد وصف متاح.";
+
+        const episodesList = document.getElementById("episodesList");
+        if (movieData.length > 0) {
+            movieData.forEach((episode, index) => {
+                const episodeDiv = document.createElement("div");
+                episodeDiv.className = "episode-item";
+                episodeDiv.textContent = episode.title || `حلقة ${index + 1}`;
+                episodeDiv.onclick = () => {
+                    window.location.href = episode.link;
+                };
+                episodesList.appendChild(episodeDiv);
+            });
+        } else {
+            episodesList.innerHTML = "<p>لا توجد حلقات متاحة</p>";
         }
-
-        const db = firebase.database().ref(`film/${movieId}`);
-        db.once("value").then(snapshot => {
-            const movie = snapshot.val();
-            if (!movie) {
-                alert("الفيلم غير موجود!");
-                return;
-            }
-
-            document.getElementById("movieTitle").textContent = movie.name;
-            document.getElementById("movieImg").src = movie.img;
-            document.getElementById("movieDescription").textContent = movie.description || "لا يوجد وصف متاح.";
-
-            const episodesList = document.getElementById("episodesList");
-            if (movie.episodes) {
-                Object.keys(movie.episodes).forEach(epKey => {
-                    const episode = movie.episodes[epKey];
-                    const episodeDiv = document.createElement("div");
-                    episodeDiv.className = "episode-item";
-                    episodeDiv.textContent = episode.title || `حلقة ${epKey}`;
-                    episodeDiv.onclick = () => {
-                        window.location.href = episode.link;
-                    };
-                    episodesList.appendChild(episodeDiv);
-                });
-            }
-        });
-
     </script>
 
 </body>
