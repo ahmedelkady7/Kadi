@@ -3,122 +3,103 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>الحلقات</title>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <title>قائمة الحلقات</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Cairo', sans-serif;
-        }
-
         body {
-            background: #181C25;
+            background-color: #121212;
             color: white;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            text-align: center;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
             padding: 20px;
         }
-
-        h1 {
-            margin-bottom: 5px;
+        .episodes-list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
         }
-
-        #movieName {
-            font-size: 18px;
-            color: #BBB;
-            margin-bottom: 20px;
-        }
-
-        .episode-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 15px;
-            width: 100%;
-            max-width: 900px;
-        }
-
         .episode-item {
-            background: #202731;
-            border-radius: 10px;
-            overflow: hidden;
-            cursor: pointer;
-            transition: transform 0.3s ease-in-out;
-            text-align: center;
+            width: 150px;
+            background: #1e1e1e;
             padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.2s;
         }
-
         .episode-item:hover {
             transform: scale(1.05);
         }
-
         .episode-item img {
             width: 100%;
-            height: 140px;
-            object-fit: cover;
-            border-radius: 10px;
+            height: auto;
+            border-radius: 5px;
         }
-
         .episode-name {
-            padding: 8px;
-            font-size: 16px;
+            margin-top: 8px;
+            font-size: 14px;
             font-weight: bold;
         }
     </style>
 </head>
 <body>
+    <div class="container">
+        <h1>قائمة الحلقات</h1>
+        <p id="movieName" style="font-size: 18px; color: #bbb;"></p>
+        <div id="episodesList" class="episodes-list"></div>
+    </div>
 
-    <h1>قائمة الحلقات</h1>
-    <p id="movieName"></p>  <!-- ✅ تم إضافة اسم الفيلم هنا -->
+    <script type="module">
+        // استيراد Firebase
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+        import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
 
-    <div class="episode-container" id="episodesList"></div>
-
-    <script>
+        // إعداد Firebase
         const firebaseConfig = {
-            apiKey: "AIzaSyAI21TvGX8jjTbEIDww5GEKcxM9zL6Gkn8",
-            authDomain: "ak-sport-a985e.firebaseapp.com",
-            databaseURL: "https://ak-sport-a985e-default-rtdb.firebaseio.com/",
-            projectId: "ak-sport-a985e",
-            appId: "1:922662521404:android:be257019ae9c69f6ddd139"
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_AUTH_DOMAIN",
+            databaseURL: "YOUR_DATABASE_URL",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_STORAGE_BUCKET",
+            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+            appId: "YOUR_APP_ID"
         };
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
 
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.database();
-
+        // الحصول على ID الفيلم من الـ URL
         const urlParams = new URLSearchParams(window.location.search);
         const movieId = urlParams.get("id");
 
         if (!movieId) {
-            alert("لم يتم العثور على الفيلم!");
+            alert("لم يتم تحديد الفيلم!");
         } else {
-            db.ref(`film/${movieId}`).once("value").then(snapshot => {
-                const movieData = snapshot.val();
-
-                console.log("البيانات المسترجعة:", movieData);
-
-                if (!movieData || !movieData.data) {
-                    alert("لا توجد حلقات متاحة!");
+            // جلب بيانات الفيلم والحلقات من Firebase
+            const movieRef = ref(db, `film/${movieId}`);
+            get(movieRef).then(snapshot => {
+                if (!snapshot.exists()) {
+                    alert("الفيلم غير موجود في قاعدة البيانات!");
                     return;
                 }
 
-                // ✅ إظهار اسم الفيلم تحت عنوان "قائمة الحلقات"
+                const movieData = snapshot.val();
                 document.getElementById("movieName").innerText = movieData.name || "اسم غير متوفر";
 
+                if (!movieData.data) {
+                    document.getElementById("episodesList").innerHTML = "<p style='color: #bbb;'>لا توجد حلقات متاحة.</p>";
+                    return;
+                }
+
+                const episodesArray = Object.values(movieData.data); // تحويل الكائن إلى مصفوفة
                 const episodesList = document.getElementById("episodesList");
                 episodesList.innerHTML = "";
 
-                const episodesArray = Object.values(movieData.data);
-
                 episodesArray.forEach(episode => {
-                    if (!episode || !episode.img || !episode.name || !episode.url) {
-                        console.warn("تم العثور على عنصر غير مكتمل:", episode);
-                        return;
-                    }
+                    if (!episode || !episode.img || !episode.name || !episode.url) return;
 
                     const episodeDiv = document.createElement("div");
                     episodeDiv.className = "episode-item";
@@ -134,13 +115,11 @@
                     episodesList.appendChild(episodeDiv);
                 });
 
-                console.log("تم جلب الحلقات بنجاح!");
             }).catch(error => {
                 console.error("خطأ في جلب البيانات:", error);
-                alert("فشل تحميل البيانات!");
+                alert("حدث خطأ أثناء تحميل البيانات!");
             });
         }
     </script>
-
 </body>
 </html>
