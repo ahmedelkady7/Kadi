@@ -31,6 +31,7 @@
             background: #202731;
             padding: 20px;
             border-radius: 10px;
+            text-align: center;
         }
 
         .movie-image {
@@ -39,7 +40,6 @@
         }
 
         .movie-title {
-            text-align: center;
             font-size: 24px;
             margin-top: 10px;
         }
@@ -47,6 +47,41 @@
         .movie-description {
             margin-top: 15px;
             font-size: 16px;
+        }
+
+        .episodes-container {
+            width: 100%;
+            max-width: 800px;
+            margin-top: 20px;
+        }
+
+        .episode-item {
+            display: flex;
+            align-items: center;
+            background: #202731;
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: transform 0.2s ease-in-out;
+        }
+
+        .episode-item:hover {
+            transform: scale(1.05);
+        }
+
+        .episode-item img {
+            width: 120px;
+            height: 70px;
+            border-radius: 10px;
+            object-fit: cover;
+        }
+
+        .episode-title {
+            margin-left: 15px;
+            font-size: 16px;
+            font-weight: bold;
+            color: white;
         }
     </style>
 </head>
@@ -57,6 +92,8 @@
         <h1 id="movieTitle" class="movie-title"></h1>
         <p id="movieDescription" class="movie-description"></p>
     </div>
+
+    <div class="episodes-container" id="episodesList"></div>
 
     <script>
         const firebaseConfig = {
@@ -81,6 +118,32 @@
                     document.getElementById("movieImage").src = movie.img;
                     document.getElementById("movieTitle").innerText = movie.name;
                     document.getElementById("movieDescription").innerText = movie.about;
+
+                    // جلب الحلقات من المفتاح "data"
+                    if (movie.data) {
+                        const episodesList = document.getElementById("episodesList");
+                        episodesList.innerHTML = ""; // تفريغ المحتوى
+
+                        Object.keys(movie.data).forEach((episodeKey) => {
+                            const episode = movie.data[episodeKey];
+
+                            const episodeDiv = document.createElement("div");
+                            episodeDiv.className = "episode-item";
+                            episodeDiv.innerHTML = `
+                                <img src="${episode.img}" alt="صورة الحلقة">
+                                <div class="episode-title">${episode.name}</div>
+                            `;
+
+                            // عند النقر، يتم التوجيه إلى رابط الحلقة
+                            episodeDiv.onclick = () => {
+                                window.location.href = episode.link;
+                            };
+
+                            episodesList.appendChild(episodeDiv);
+                        });
+                    } else {
+                        document.getElementById("episodesList").innerHTML = "<p>لا توجد حلقات متاحة</p>";
+                    }
                 } else {
                     alert("لم يتم العثور على الفيلم!");
                 }
