@@ -71,7 +71,7 @@
 
     <script>
         const firebaseConfig = {
-            apiKey: "AIzaSyAI21TvGX8jjTbEIDww5GEKcxM9zL6Gkn8",
+            apiKey: "API_KEY_HERE",
             authDomain: "ak-sport-a985e.firebaseapp.com",
             databaseURL: "https://ak-sport-a985e-default-rtdb.firebaseio.com/",
             projectId: "ak-sport-a985e",
@@ -102,7 +102,15 @@
                 `;
 
                 movieDiv.onclick = () => {
-                    window.location.href = `episod.html?id=${key}`;
+                    const queryParams = new URLSearchParams({
+                        id: key,
+                        name: movie.name,
+                        img: movie.img,
+                        about: movie.about || "",
+                        data: JSON.stringify(movie.data || [])
+                    }).toString();
+                    
+                    window.location.href = `episode.html?${queryParams}`;
                 };
 
                 gridContainer.appendChild(movieDiv);
