@@ -23,35 +23,66 @@
             padding: 20px;
         }
 
-        .movie-container {
+        .container {
             max-width: 600px;
             margin: auto;
-        }
-
-        img {
-            width: 100%;
-            border-radius: 10px;
-            margin-bottom: 10px;
-        }
-
-        .description {
             background: #202731;
             padding: 15px;
             border-radius: 10px;
-            text-align: right;
         }
+
+        h1 {
+            margin-bottom: 15px;
+            font-size: 22px;
+        }
+
+        .movie-img {
+            width: 100%;
+            max-height: 300px;
+            object-fit: cover;
+            border-radius: 10px;
+        }
+
+        .description {
+            margin: 10px 0;
+            background: #252C36;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        .episodes {
+            margin-top: 15px;
+        }
+
+        .episode-item {
+            background: #252C36;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .episode-item:hover {
+            background: #333C47;
+        }
+
     </style>
 </head>
 <body>
 
-    <h1 id="movieTitle">تحميل...</h1>
-    <div class="movie-container">
-        <img id="movieImg" src="" alt="الصورة غير متاحة">
-        <div class="description" id="movieDescription">جارِ التحميل...</div>
+    <div class="container">
+        <h1 id="movieTitle">تحميل...</h1>
+        <img id="movieImg" class="movie-img" src="" alt="Movie Image">
+        <p id="movieDescription" class="description">جارٍ تحميل الوصف...</p>
+
+        <div class="episodes" id="episodesContainer">
+            <h2>الحلقات</h2>
+            <div id="episodesList"></div>
+        </div>
     </div>
 
     <script>
-        // إعداد Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyAI21TvGX8jjTbEIDww5GEKcxM9zL6Gkn8",
             authDomain: "ak-sport-a985e.firebaseapp.com",
@@ -61,35 +92,41 @@
         };
 
         firebase.initializeApp(firebaseConfig);
-        const db = firebase.database().ref().child("film");
-
-        // استخراج معرف الفيلم من الـ URL
-        const params = new URLSearchParams(window.location.search);
-        const movieId = params.get("id");
+        const urlParams = new URLSearchParams(window.location.search);
+        const movieId = urlParams.get("id");
 
         if (!movieId) {
-            alert("معرف الفيلم غير موجود!");
-        } else {
-            // جلب بيانات الفيلم
-            db.child(movieId).once("value")
-                .then(snapshot => {
-                    if (!snapshot.exists()) {
-                        alert("لم يتم العثور على الفيلم!");
-                        return;
-                    }
-
-                    const movie = snapshot.val();
-
-                    // عرض البيانات في الصفحة
-                    document.getElementById("movieTitle").textContent = movie.name || "اسم غير متاح";
-                    document.getElementById("movieImg").src = movie.img || "";
-                    document.getElementById("movieDescription").textContent = movie.description || "لا يوجد وصف.";
-                })
-                .catch(error => {
-                    console.error("خطأ في جلب البيانات:", error);
-                    alert("فشل تحميل بيانات الفيلم!");
-                });
+            alert("فشل العثور على الفيلم!");
+            window.location.href = "index.html";
         }
+
+        const db = firebase.database().ref(`film/${movieId}`);
+        db.once("value").then(snapshot => {
+            const movie = snapshot.val();
+            if (!movie) {
+                alert("الفيلم غير موجود!");
+                return;
+            }
+
+            document.getElementById("movieTitle").textContent = movie.name;
+            document.getElementById("movieImg").src = movie.img;
+            document.getElementById("movieDescription").textContent = movie.description || "لا يوجد وصف متاح.";
+
+            const episodesList = document.getElementById("episodesList");
+            if (movie.episodes) {
+                Object.keys(movie.episodes).forEach(epKey => {
+                    const episode = movie.episodes[epKey];
+                    const episodeDiv = document.createElement("div");
+                    episodeDiv.className = "episode-item";
+                    episodeDiv.textContent = episode.title || `حلقة ${epKey}`;
+                    episodeDiv.onclick = () => {
+                        window.location.href = episode.link;
+                    };
+                    episodesList.appendChild(episodeDiv);
+                });
+            }
+        });
+
     </script>
 
 </body>
