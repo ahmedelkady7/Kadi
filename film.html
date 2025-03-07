@@ -29,7 +29,6 @@
             margin-bottom: 20px;
         }
 
-        /* تصميم الشبكة */
         .grid-container {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
@@ -71,7 +70,6 @@
     <div class="grid-container" id="moviesGrid"></div>
 
     <script>
-        // إعداد Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyAI21TvGX8jjTbEIDww5GEKcxM9zL6Gkn8",
             authDomain: "ak-sport-a985e.firebaseapp.com",
@@ -81,45 +79,39 @@
         };
 
         firebase.initializeApp(firebaseConfig);
-        const db = firebase.database().ref().child("film");
+        const db = firebase.database().ref("film");
 
-        // جلب البيانات
-        db.once("value")
-            .then(snapshot => {
-                console.log("البيانات المسترجعة:", snapshot.val());
-                const data = snapshot.val();
-                if (!data) {
-                    alert("لا توجد بيانات!");
-                    return;
-                }
+        db.once("value").then(snapshot => {
+            const data = snapshot.val();
+            if (!data) {
+                alert("لا توجد بيانات!");
+                return;
+            }
 
-                const gridContainer = document.getElementById("moviesGrid");
-                gridContainer.innerHTML = "";
+            const gridContainer = document.getElementById("moviesGrid");
+            gridContainer.innerHTML = "";
 
-                Object.keys(data).forEach((key) => {
-                    const movie = data[key];
+            Object.keys(data).forEach((key) => {
+                const movie = data[key];
 
-                    if (!movie.img || !movie.name) return;
+                const movieDiv = document.createElement("div");
+                movieDiv.className = "movie-item";
+                movieDiv.innerHTML = `
+                    <img src="${movie.img}" alt="${movie.name}">
+                    <div class="movie-name">${movie.name}</div>
+                `;
 
-                    const movieDiv = document.createElement("div");
-                    movieDiv.className = "movie-item";
-                    movieDiv.innerHTML = `
-                        <img src="${movie.img}" alt="${movie.name}">
-                        <div class="movie-name">${movie.name}</div>
-                    `;
+                movieDiv.onclick = () => {
+                    window.location.href = `episod.html?id=${key}`;
+                };
 
-                    // توجيه المستخدم إلى صفحة التفاصيل
-                    movieDiv.onclick = () => {
-                        window.location.href = `episod.html?id=${key}`;
-                    };
-
-                    gridContainer.appendChild(movieDiv);
-                });
-            })
-            .catch(error => {
-                console.error("خطأ في جلب البيانات:", error);
-                alert("فشل تحميل البيانات!");
+                gridContainer.appendChild(movieDiv);
             });
+        }).catch(error => {
+            console.error("خطأ في جلب البيانات:", error);
+            alert("فشل تحميل البيانات!");
+        });
+
     </script>
 
 </body>
