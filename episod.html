@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>تفاصيل الفيلم</title>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');
 
@@ -16,95 +18,80 @@
 
         body {
             background: #181C25;
-            color: white;
-            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             padding: 20px;
+            color: white;
         }
 
-        .container {
-            max-width: 600px;
-            margin: auto;
-            background: #202731;
-            padding: 15px;
-            border-radius: 10px;
-        }
-
-        h1 {
-            margin-bottom: 15px;
-            font-size: 22px;
-        }
-
-        .movie-img {
+        .movie-container {
             width: 100%;
-            max-height: 300px;
-            object-fit: cover;
+            max-width: 800px;
+            background: #202731;
+            padding: 20px;
             border-radius: 10px;
         }
 
-        .description {
-            margin: 10px 0;
-            background: #252C36;
-            padding: 10px;
-            border-radius: 5px;
+        .movie-image {
+            width: 100%;
+            border-radius: 10px;
         }
 
-        .episodes {
+        .movie-title {
+            text-align: center;
+            font-size: 24px;
+            margin-top: 10px;
+        }
+
+        .movie-description {
             margin-top: 15px;
-        }
-
-        .episode-item {
-            background: #252C36;
-            padding: 10px;
-            margin: 5px 0;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-
-        .episode-item:hover {
-            background: #333C47;
+            font-size: 16px;
         }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <h1 id="movieTitle">تحميل...</h1>
-        <img id="movieImg" class="movie-img" src="" alt="Movie Image">
-        <p id="movieDescription" class="description">جارٍ تحميل الوصف...</p>
-
-        <div class="episodes" id="episodesContainer">
-            <h2>الحلقات</h2>
-            <div id="episodesList"></div>
-        </div>
+    <div class="movie-container">
+        <img id="movieImage" class="movie-image" src="" alt="صورة الفيلم">
+        <h1 id="movieTitle" class="movie-title"></h1>
+        <p id="movieDescription" class="movie-description"></p>
     </div>
 
     <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyAI21TvGX8jjTbEIDww5GEKcxM9zL6Gkn8",
+            authDomain: "ak-sport-a985e.firebaseapp.com",
+            databaseURL: "https://ak-sport-a985e-default-rtdb.firebaseio.com/",
+            projectId: "ak-sport-a985e",
+            appId: "1:922662521404:android:be257019ae9c69f6ddd139"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database().ref("film");
+
+        // الحصول على ID من عنوان URL
         const urlParams = new URLSearchParams(window.location.search);
         const movieId = urlParams.get("id");
-        const movieName = urlParams.get("name");
-        const movieImg = urlParams.get("img");
-        const movieAbout = urlParams.get("about");
-        const movieData = JSON.parse(urlParams.get("data") || "[]");
 
-        document.getElementById("movieTitle").textContent = movieName;
-        document.getElementById("movieImg").src = movieImg;
-        document.getElementById("movieDescription").textContent = movieAbout || "لا يوجد وصف متاح.";
-
-        const episodesList = document.getElementById("episodesList");
-        if (movieData.length > 0) {
-            movieData.forEach((episode, index) => {
-                const episodeDiv = document.createElement("div");
-                episodeDiv.className = "episode-item";
-                episodeDiv.textContent = episode.title || `حلقة ${index + 1}`;
-                episodeDiv.onclick = () => {
-                    window.location.href = episode.link;
-                };
-                episodesList.appendChild(episodeDiv);
+        if (movieId) {
+            db.child(movieId).once("value").then(snapshot => {
+                const movie = snapshot.val();
+                if (movie) {
+                    document.getElementById("movieImage").src = movie.img;
+                    document.getElementById("movieTitle").innerText = movie.name;
+                    document.getElementById("movieDescription").innerText = movie.about;
+                } else {
+                    alert("لم يتم العثور على الفيلم!");
+                }
+            }).catch(error => {
+                console.error("خطأ في جلب البيانات:", error);
+                alert("فشل تحميل البيانات!");
             });
         } else {
-            episodesList.innerHTML = "<p>لا توجد حلقات متاحة</p>";
+            alert("لم يتم تمرير معرف الفيلم بشكل صحيح!");
         }
+
     </script>
 
 </body>
