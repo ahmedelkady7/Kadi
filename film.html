@@ -81,7 +81,7 @@
         };
 
         firebase.initializeApp(firebaseConfig);
-        const db = firebase.database().ref("film"); // المسار الجديد للأفلام
+        const db = firebase.database().ref().child("film");
 
         // جلب البيانات
         db.once("value")
@@ -99,6 +99,8 @@
                 Object.keys(data).forEach((key) => {
                     const movie = data[key];
 
+                    if (!movie.img || !movie.name) return;
+
                     const movieDiv = document.createElement("div");
                     movieDiv.className = "movie-item";
                     movieDiv.innerHTML = `
@@ -106,7 +108,11 @@
                         <div class="movie-name">${movie.name}</div>
                     `;
 
-                    movieDiv.onclick = () => openMovie(movie);
+                    // توجيه المستخدم إلى صفحة التفاصيل
+                    movieDiv.onclick = () => {
+                        window.location.href = `episod.html?id=${key}`;
+                    };
+
                     gridContainer.appendChild(movieDiv);
                 });
             })
@@ -114,11 +120,6 @@
                 console.error("خطأ في جلب البيانات:", error);
                 alert("فشل تحميل البيانات!");
             });
-
-        function openMovie(movie) {
-            alert("فتح: " + movie.name);
-            // يمكنك لاحقًا توجيه المستخدم إلى صفحة أخرى لمشاهدة الفيلم
-        }
     </script>
 
 </body>
