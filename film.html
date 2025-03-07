@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الأفلام والمسلسلات</title>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Cairo', sans-serif;
+        }
+
+        body {
+            background: #181C25;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        h1 {
+            color: white;
+            margin-bottom: 20px;
+        }
+
+        /* تصميم الشبكة */
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 10px;
+            width: 100%;
+            max-width: 800px;
+        }
+
+        .movie-item {
+            background: #202731;
+            border-radius: 10px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .movie-item:hover {
+            transform: scale(1.05);
+        }
+
+        .movie-item img {
+            width: 100%;
+            height: 170px;
+            object-fit: cover;
+        }
+
+        .movie-name {
+            text-align: center;
+            padding: 5px;
+            color: white;
+            font-size: 14px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>الأفلام والمسلسلات</h1>
+    <div class="grid-container" id="moviesGrid"></div>
+
+    <script>
+        // إعداد Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyAI21TvGX8jjTbEIDww5GEKcxM9zL6Gkn8",
+            authDomain: "ak-sport-a985e.firebaseapp.com",
+            databaseURL: "https://ak-sport-a985e-default-rtdb.firebaseio.com/",
+            projectId: "ak-sport-a985e",
+            appId: "1:922662521404:android:be257019ae9c69f6ddd139"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database().ref("film"); // المسار الجديد للأفلام
+
+        // جلب البيانات
+        db.once("value")
+            .then(snapshot => {
+                console.log("البيانات المسترجعة:", snapshot.val());
+                const data = snapshot.val();
+                if (!data) {
+                    alert("لا توجد بيانات!");
+                    return;
+                }
+
+                const gridContainer = document.getElementById("moviesGrid");
+                gridContainer.innerHTML = "";
+
+                Object.keys(data).forEach((key) => {
+                    const movie = data[key];
+
+                    const movieDiv = document.createElement("div");
+                    movieDiv.className = "movie-item";
+                    movieDiv.innerHTML = `
+                        <img src="${movie.img}" alt="${movie.name}">
+                        <div class="movie-name">${movie.name}</div>
+                    `;
+
+                    movieDiv.onclick = () => openMovie(movie);
+                    gridContainer.appendChild(movieDiv);
+                });
+            })
+            .catch(error => {
+                console.error("خطأ في جلب البيانات:", error);
+                alert("فشل تحميل البيانات!");
+            });
+
+        function openMovie(movie) {
+            alert("فتح: " + movie.name);
+            // يمكنك لاحقًا توجيه المستخدم إلى صفحة أخرى لمشاهدة الفيلم
+        }
+    </script>
+
+</body>
+</html>
