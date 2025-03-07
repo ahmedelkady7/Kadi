@@ -71,10 +71,12 @@
         }
 
         .episode-item img {
-            width: 120px;
-            height: 70px;
+            width: 120px; /* عرض ثابت للصورة */
+            height: auto; /* الحفاظ على نسبة الأبعاد */
+            max-height: 80px; /* تحديد أقصى ارتفاع */
             border-radius: 10px;
-            object-fit: cover;
+            object-fit: contain; /* تصغير الصورة مع الحفاظ على أبعادها */
+            background-color: #000; /* خلفية سوداء لمنع ظهور أي فراغ */
         }
 
         .episode-title {
@@ -115,32 +117,37 @@
             db.child(movieId).once("value").then(snapshot => {
                 const movie = snapshot.val();
                 if (movie) {
-                    document.getElementById("movieImage").src = movie.img;
-                    document.getElementById("movieTitle").innerText = movie.name;
-                    document.getElementById("movieDescription").innerText = movie.about;
+                    document.getElementById("movieImage").src = movie.img || "placeholder.jpg";
+                    document.getElementById("movieTitle").innerText = movie.name || "عنوان غير متوفر";
+                    document.getElementById("movieDescription").innerText = movie.about || "لا يوجد وصف متاح.";
 
-                    // جلب الحلقات من المفتاح "data"
-                    if (movie.data) {
+                    // التحقق من وجود المفتاح "data" قبل محاولة جلب الحلقات
+                    if (movie.data && Array.isArray(movie.data)) {
                         const episodesList = document.getElementById("episodesList");
                         episodesList.innerHTML = ""; // تفريغ المحتوى
 
-                        Object.keys(movie.data).forEach((episodeKey) => {
-                            const episode = movie.data[episodeKey];
+                        movie.data.forEach((episode) => {
+                            if (episode && episode.img && episode.name && episode.url) {
+                                const episodeDiv = document.createElement("div");
+                                episodeDiv.className = "episode-item";
+                                episodeDiv.innerHTML = `
+                                    <img src="${episode.img}" alt="صورة الحلقة">
+                                    <div class="episode-title">${episode.name}</div>
+                                `;
 
-                            const episodeDiv = document.createElement("div");
-                            episodeDiv.className = "episode-item";
-                            episodeDiv.innerHTML = `
-                                <img src="${episode.img}" alt="صورة الحلقة">
-                                <div class="episode-title">${episode.name}</div>
-                            `;
+                                // عند النقر، يتم التوجيه إلى رابط الحلقة
+                                episodeDiv.onclick = () => {
+                                    window.location.href = episode.url;
+                                };
 
-                            // عند النقر، يتم التوجيه إلى رابط الحلقة
-                            episodeDiv.onclick = () => {
-                                window.location.href = episode.link;
-                            };
-
-                            episodesList.appendChild(episodeDiv);
+                                episodesList.appendChild(episodeDiv);
+                            }
                         });
+
+                        // في حال عدم وجود حلقات متاحة
+                        if (episodesList.innerHTML === "") {
+                            episodesList.innerHTML = "<p>لا توجد حلقات متاحة</p>";
+                        }
                     } else {
                         document.getElementById("episodesList").innerHTML = "<p>لا توجد حلقات متاحة</p>";
                     }
@@ -154,7 +161,6 @@
         } else {
             alert("لم يتم تمرير معرف الفيلم بشكل صحيح!");
         }
-
     </script>
 
 </body>
