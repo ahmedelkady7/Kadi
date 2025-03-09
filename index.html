@@ -7,18 +7,31 @@
     <link rel="stylesheet" href="styles.css">
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;700&display=swap" rel="stylesheet">
 </head>
 <body>
+
     <!-- الشريط العلوي -->
     <header>
         <div class="search-bar">
             <input type="text" id="searchInput" placeholder="ابحث عن قناة..." onkeyup="filterChannels()">
+            <button>🔍</button>
         </div>
         <div class="icons">
             <img src="notification-icon.png" alt="إشعارات" onclick="goToNotifications()">
             <img src="profile.jpg" alt="حسابي" class="profile-pic" onclick="goToAccount()">
         </div>
     </header>
+
+    <!-- قائمة الفئات -->
+    <div class="categories">
+        <button class="category-btn" onclick="filterCategory('all')">الكل</button>
+        <button class="category-btn" onclick="filterCategory('movies')">أحدث الأفلام</button>
+        <button class="category-btn" onclick="filterCategory('sports')">رياضة</button>
+        <button class="category-btn" onclick="filterCategory('news')">أخبار</button>
+    </div>
 
     <!-- قسم القنوات المباشرة -->
     <section class="live-tv">
@@ -90,6 +103,14 @@
             }
         }
 
+        // فلترة القنوات حسب الفئة
+        function filterCategory(category) {
+            let allChannels = document.getElementsByClassName("channel");
+            for (let channel of allChannels) {
+                channel.style.display = category === "all" || channel.dataset.category === category ? "block" : "none";
+            }
+        }
+
         // التوجيه إلى صفحة الإشعارات
         function goToNotifications() {
             window.location.href = "notifications.html";
@@ -111,5 +132,6 @@
             loadMovies();
         };
     </script>
+
 </body>
 </html>
