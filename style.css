@@ -1,0 +1,88 @@
+/* عام */
+body {
+    background: #181C25;
+    color: white;
+    font-family: 'Cairo', sans-serif;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+}
+
+/* الشريط العلوي */
+header {
+    background: #202731;
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    font-size: 20px;
+    font-weight: bold;
+    color: #00FFD1;
+}
+
+/* شريط البحث */
+.search-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.search-container input {
+    padding: 8px;
+    border-radius: 20px;
+    border: none;
+    width: 0;
+    transition: width 0.3s ease-in-out;
+    opacity: 0;
+}
+
+.search-container input.expanded {
+    width: 200px;
+    opacity: 1;
+}
+
+.search-icon {
+    width: 30px;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+/* أيقونات التنقل */
+.nav-icons img {
+    width: 35px;
+    margin: 0 10px;
+    cursor: pointer;
+}
+
+/* الأقسام */
+.content-section {
+    margin: 20px 0;
+}
+
+.horizontal-list {
+    display: flex;
+    overflow-x: auto;
+    padding: 10px;
+}
+
+/* بطاقات المحتوى */
+.card {
+    background: #202731;
+    margin: 10px;
+    padding: 10px;
+    border-radius: 10px;
+    text-align: center;
+    width: 150px;
+}
+
+.card img {
+    width: 100px;
+    border-radius: 10px;
+}
+
+.card p {
+    margin-top: 10px;
+}
