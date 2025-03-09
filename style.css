@@ -53,7 +53,66 @@ body {
     gap: 20px;
     flex-wrap: wrap;
 }
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    direction: rtl;
+    background-color: #f4f4f4;
+}
 
+header {
+    background-color: #333;
+    color: white;
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.search-bar input {
+    padding: 10px;
+    width: 200px;
+}
+
+.icons img {
+    width: 30px;
+    margin: 0 10px;
+    cursor: pointer;
+}
+
+.categories {
+    display: flex;
+    justify-content: center;
+    margin: 10px 0;
+}
+
+.categories button {
+    padding: 10px;
+    margin: 5px;
+    cursor: pointer;
+    background-color: #ddd;
+    border: none;
+}
+
+.horizontal-list, .movie-slider {
+    display: flex;
+    overflow-x: auto;
+    padding: 10px;
+}
+
+.channel-card, .movie-card {
+    background: white;
+    margin: 10px;
+    padding: 10px;
+    border-radius: 5px;
+    width: 150px;
+    text-align: center;
+}
+
+.channel-card img, .movie-card img {
+    width: 100%;
+    border-radius: 5px;
+}
 .channel-card {
     background: #202731;
     padding: 10px;
