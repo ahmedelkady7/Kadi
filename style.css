@@ -1,3 +1,4 @@
+/* إعدادات عامة للصفحة */
 body {
     background: #181C25;
     color: white;
@@ -5,37 +6,39 @@ body {
     margin: 0;
     padding: 0;
     text-align: center;
+    direction: rtl; /* لضبط الاتجاه إلى اليمين */
 }
 
-.header {
+/* تنسيق الهيدر */
+header {
     background: #202731;
+    color: white;
     padding: 10px;
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
 
-.header input {
-    padding: 8px;
+/* شريط البحث */
+.search-bar input {
+    padding: 10px;
+    width: 200px;
     border-radius: 5px;
     border: none;
 }
 
-.header button {
-    background: #194643;
-    color: white;
-    padding: 8px;
-    border: none;
-    border-radius: 5px;
-}
-
-.user-options span {
+/* أيقونات الحساب والإشعارات */
+.icons img {
+    width: 30px;
     margin: 0 10px;
     cursor: pointer;
 }
 
+/* أزرار الفئات */
 .categories {
-    margin: 20px 0;
+    display: flex;
+    justify-content: center;
+    margin: 10px 0;
 }
 
 .category-btn {
@@ -45,79 +48,23 @@ body {
     margin: 5px;
     border: none;
     border-radius: 5px;
+    cursor: pointer;
 }
 
+/* تصميم القنوات */
 .channels {
     display: flex;
     justify-content: center;
     gap: 20px;
     flex-wrap: wrap;
 }
-body {
-    font-family: Arial, sans-serif;
-    text-align: center;
-    direction: rtl;
-    background-color: #f4f4f4;
-}
 
-header {
-    background-color: #333;
-    color: white;
-    padding: 10px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.search-bar input {
-    padding: 10px;
-    width: 200px;
-}
-
-.icons img {
-    width: 30px;
-    margin: 0 10px;
-    cursor: pointer;
-}
-
-.categories {
-    display: flex;
-    justify-content: center;
-    margin: 10px 0;
-}
-
-.categories button {
-    padding: 10px;
-    margin: 5px;
-    cursor: pointer;
-    background-color: #ddd;
-    border: none;
-}
-
-.horizontal-list, .movie-slider {
-    display: flex;
-    overflow-x: auto;
-    padding: 10px;
-}
-
-.channel-card, .movie-card {
-    background: white;
-    margin: 10px;
-    padding: 10px;
-    border-radius: 5px;
-    width: 150px;
-    text-align: center;
-}
-
-.channel-card img, .movie-card img {
-    width: 100%;
-    border-radius: 5px;
-}
 .channel-card {
     background: #202731;
     padding: 10px;
     border-radius: 10px;
     text-align: center;
+    width: 150px;
 }
 
 .channel-card img {
@@ -127,4 +74,25 @@ header {
 
 .channel-card p {
     margin-top: 10px;
+}
+
+/* تصميم الأفلام */
+.horizontal-list, .movie-slider {
+    display: flex;
+    overflow-x: auto;
+    padding: 10px;
+}
+
+.movie-card {
+    background: white;
+    margin: 10px;
+    padding: 10px;
+    border-radius: 5px;
+    width: 150px;
+    text-align: center;
+}
+
+.movie-card img {
+    width: 100%;
+    border-radius: 5px;
 }
