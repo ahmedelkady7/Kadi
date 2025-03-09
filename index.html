@@ -3,121 +3,113 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منصة البث المباشر</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Cairo', sans-serif;
-        }
-
-        body {
-            background: #181C25;
-            color: white;
-            text-align: center;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            padding: 20px;
-        }
-
-        h1 {
-            margin-bottom: 20px;
-            font-size: 24px;
-        }
-
-        .search-bar {
-            width: 100%;
-            max-width: 400px;
-            position: relative;
-            margin-bottom: 20px;
-        }
-
-        .search-bar input {
-            width: 100%;
-            padding: 12px 40px 12px 15px;
-            font-size: 16px;
-            border-radius: 8px;
-            border: none;
-            background: #202731;
-            color: white;
-            outline: none;
-        }
-
-        .search-bar i {
-            position: absolute;
-            right: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            font-size: 20px;
-            color: white;
-            cursor: pointer;
-        }
-
-        .container {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            width: 100%;
-            max-width: 400px;
-        }
-
-        .btn {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            width: 100%;
-            padding: 15px;
-            font-size: 18px;
-            font-weight: bold;
-            text-decoration: none;
-            color: white;
-            background: #202731;
-            border-radius: 8px;
-            transition: background 0.3s ease-in-out, transform 0.2s ease-in-out;
-        }
-
-        .btn i {
-            font-size: 22px;
-        }
-
-        .btn:hover {
-            background: #2C3748;
-            transform: scale(1.05);
-        }
-    </style>
+    <title>البث المباشر</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database.js"></script>
 </head>
 <body>
+    <!-- الشريط العلوي -->
+    <header>
+        <div class="search-bar">
+            <input type="text" id="searchInput" placeholder="ابحث عن قناة..." onkeyup="filterChannels()">
+        </div>
+        <div class="icons">
+            <img src="notification-icon.png" alt="إشعارات" onclick="goToNotifications()">
+            <img src="profile.jpg" alt="حسابي" class="profile-pic" onclick="goToAccount()">
+        </div>
+    </header>
 
-    <div class="search-bar">
-        <input type="text" placeholder="ابحث هنا..." onclick="goToSearch()">
-        <i class="fas fa-search" onclick="goToSearch()"></i>
-    </div>
+    <!-- قسم القنوات المباشرة -->
+    <section class="live-tv">
+        <h2>Live TV Channels</h2>
+        <div id="channelsList" class="horizontal-list"></div>
+    </section>
 
-    <h1>مرحبًا بك في منصة البث المباشر</h1>
-    
-    <div class="container">
-        <a href="live2.html" class="btn">
-            <i class="fas fa-tv"></i> قنوات البث المباشر
-        </a>
-        
-        <a href="film.html" class="btn">
-            <i class="fas fa-film"></i> الأفلام والمسلسلات
-        </a>
-    </div>
+    <!-- قسم الأفلام -->
+    <section class="movies">
+        <h2>أحدث الأفلام</h2>
+        <div id="moviesList" class="movie-slider"></div>
+    </section>
 
     <script>
-        function goToSearch() {
-            window.location.href = "search.html";
-        }
-    </script>
+        // تكوين Firebase
+        const firebaseConfig = {
+            apiKey: "AlzaSyAI21TvGX8jjTbEIDww5GEKcxM9zL6Gkn8",
+            authDomain: "ak-sport-a985e.firebaseapp.com",
+            databaseURL: "https://ak-sport-a985e-default-rtdb.firebaseio.com",
+            projectId: "ak-sport-a985e",
+            storageBucket: "ak-sport-a985e.appspot.com",
+            messagingSenderId: "922662521404",
+            appId: "1:922662521404:web:be257019ae9c69f6ddd139"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
 
+        // جلب بيانات القنوات المباشرة
+        function loadChannels() {
+            db.ref("ak_tv_2").once("value", (snapshot) => {
+                let channels = snapshot.val();
+                let list = document.getElementById("channelsList");
+                list.innerHTML = "";
+                for (let key in channels) {
+                    let channel = channels[key];
+                    let item = `<div class="channel">
+                                    <img src="${channel.img}" alt="${channel.name}">
+                                    <p>${channel.name}</p>
+                                </div>`;
+                    list.innerHTML += item;
+                }
+            });
+        }
+
+        // جلب بيانات الأفلام بترتيب تصاعدي حسب عدد المشاهدات
+        function loadMovies() {
+            db.ref("film").orderByChild("view").once("value", (snapshot) => {
+                let movies = snapshot.val();
+                let list = document.getElementById("moviesList");
+                list.innerHTML = "";
+                for (let key in movies) {
+                    let movie = movies[key];
+                    let item = `<div class="movie-card" onclick="goToEpisode('${movie.id}')">
+                                    <img src="${movie.cover}" alt="${movie.name}">
+                                    <p>${movie.name}</p>
+                                </div>`;
+                    list.innerHTML += item;
+                }
+            });
+        }
+
+        // البحث عن القنوات
+        function filterChannels() {
+            let input = document.getElementById("searchInput").value.toLowerCase();
+            let channels = document.getElementsByClassName("channel");
+            for (let channel of channels) {
+                let name = channel.getElementsByTagName("p")[0].innerText.toLowerCase();
+                channel.style.display = name.includes(input) ? "block" : "none";
+            }
+        }
+
+        // التوجيه إلى صفحة الإشعارات
+        function goToNotifications() {
+            window.location.href = "notifications.html";
+        }
+
+        // التوجيه إلى صفحة الحساب
+        function goToAccount() {
+            window.location.href = "account.html";
+        }
+
+        // التوجيه إلى صفحة الحلقة
+        function goToEpisode(id) {
+            window.location.href = `episode.html?id=${id}`;
+        }
+
+        // تحميل البيانات عند تشغيل الصفحة
+        window.onload = function () {
+            loadChannels();
+            loadMovies();
+        };
+    </script>
 </body>
 </html>
