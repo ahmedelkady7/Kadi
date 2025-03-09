@@ -7,9 +7,6 @@
     <link rel="stylesheet" href="styles.css">
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database.js"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;700&display=swap" rel="stylesheet">
 </head>
 <body>
 
@@ -17,7 +14,6 @@
     <header>
         <div class="search-bar">
             <input type="text" id="searchInput" placeholder="ابحث عن قناة..." onkeyup="filterChannels()">
-            <button>🔍</button>
         </div>
         <div class="icons">
             <img src="notification-icon.png" alt="إشعارات" onclick="goToNotifications()">
@@ -25,13 +21,13 @@
         </div>
     </header>
 
-    <!-- قائمة الفئات -->
-    <div class="categories">
-        <button class="category-btn" onclick="filterCategory('all')">الكل</button>
-        <button class="category-btn" onclick="filterCategory('movies')">أحدث الأفلام</button>
-        <button class="category-btn" onclick="filterCategory('sports')">رياضة</button>
-        <button class="category-btn" onclick="filterCategory('news')">أخبار</button>
-    </div>
+    <!-- شريط الفئات -->
+    <nav class="categories">
+        <button onclick="filterCategory('all')">الكل</button>
+        <button onclick="filterCategory('news')">أخبار</button>
+        <button onclick="filterCategory('sports')">رياضة</button>
+        <button onclick="filterCategory('movies')">أحدث الأفلام</button>
+    </nav>
 
     <!-- قسم القنوات المباشرة -->
     <section class="live-tv">
@@ -48,7 +44,7 @@
     <script>
         // تكوين Firebase
         const firebaseConfig = {
-            apiKey: "AlzaSyAI21TvGX8jjTbEIDww5GEKcxM9zL6Gkn8",
+            apiKey: "AIzaSyAI21TvGX8jjTbEIDww5GEKcxM9zL6Gkn8",
             authDomain: "ak-sport-a985e.firebaseapp.com",
             databaseURL: "https://ak-sport-a985e-default-rtdb.firebaseio.com",
             projectId: "ak-sport-a985e",
@@ -67,7 +63,7 @@
                 list.innerHTML = "";
                 for (let key in channels) {
                     let channel = channels[key];
-                    let item = `<div class="channel">
+                    let item = `<div class="channel-card" onclick="watchChannel('${channel.link}')">
                                     <img src="${channel.img}" alt="${channel.name}">
                                     <p>${channel.name}</p>
                                 </div>`;
@@ -96,18 +92,18 @@
         // البحث عن القنوات
         function filterChannels() {
             let input = document.getElementById("searchInput").value.toLowerCase();
-            let channels = document.getElementsByClassName("channel");
+            let channels = document.getElementsByClassName("channel-card");
             for (let channel of channels) {
                 let name = channel.getElementsByTagName("p")[0].innerText.toLowerCase();
                 channel.style.display = name.includes(input) ? "block" : "none";
             }
         }
 
-        // فلترة القنوات حسب الفئة
+        // تصفية القنوات حسب الفئة
         function filterCategory(category) {
-            let allChannels = document.getElementsByClassName("channel");
-            for (let channel of allChannels) {
-                channel.style.display = category === "all" || channel.dataset.category === category ? "block" : "none";
+            let channels = document.getElementsByClassName("channel-card");
+            for (let channel of channels) {
+                channel.style.display = (category === 'all' || channel.dataset.category === category) ? "block" : "none";
             }
         }
 
@@ -126,12 +122,16 @@
             window.location.href = `episode.html?id=${id}`;
         }
 
+        // فتح البث المباشر للقناة
+        function watchChannel(link) {
+            window.open(link, "_blank");
+        }
+
         // تحميل البيانات عند تشغيل الصفحة
         window.onload = function () {
             loadChannels();
             loadMovies();
         };
     </script>
-
 </body>
 </html>
