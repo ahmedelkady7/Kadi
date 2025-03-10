@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>الأفلام والمسلسلات</title>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <title>منصة البث المباشر</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');
 
@@ -18,108 +17,106 @@
 
         body {
             background: #181C25;
+            color: white;
+            text-align: center;
             display: flex;
             flex-direction: column;
             align-items: center;
+            justify-content: center;
+            height: 100vh;
             padding: 20px;
         }
 
         h1 {
-            color: white;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+
+        .search-bar {
+            width: 100%;
+            max-width: 400px;
+            position: relative;
             margin-bottom: 20px;
         }
 
-        /* تصميم الشبكة */
-        .grid-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        .search-bar input {
+            width: 100%;
+            padding: 12px 40px 12px 15px;
+            font-size: 16px;
+            border-radius: 8px;
+            border: none;
+            background: #202731;
+            color: white;
+            outline: none;
+        }
+
+        .search-bar i {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 20px;
+            color: white;
+            cursor: pointer;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
             gap: 10px;
             width: 100%;
-            max-width: 800px;
-        }
-
-        .movie-item {
-            background: #202731;
-            border-radius: 10px;
-            overflow: hidden;
-            cursor: pointer;
-            transition: transform 0.3s ease-in-out;
-        }
-
-        .movie-item:hover {
-            transform: scale(1.05);
-        }
-
-        .movie-item img {
-            width: 100%;
-            height: 170px;
-            object-fit: cover;
-        }
-
-        .movie-name {
-            text-align: center;
-            padding: 5px;
-            color: white;
-            font-size: 14px;
+            padding: 15px;
+            font-size: 18px;
             font-weight: bold;
+            text-decoration: none;
+            color: white;
+            background: #202731;
+            border-radius: 8px;
+            transition: background 0.3s ease-in-out, transform 0.2s ease-in-out;
+        }
+
+        .btn i {
+            font-size: 22px;
+        }
+
+        .btn:hover {
+            background: #2C3748;
+            transform: scale(1.05);
         }
     </style>
 </head>
 <body>
 
-    <h1>الأفلام والمسلسلات</h1>
-    <div class="grid-container" id="moviesGrid"></div>
+    <div class="search-bar">
+        <input type="text" placeholder="ابحث هنا..." onclick="goToSearch()">
+        <i class="fas fa-search" onclick="goToSearch()"></i>
+    </div>
+
+    <h1>مرحبًا بك في منصة البث المباشر</h1>
+    
+    <div class="container">
+        <a href="live2.html" class="btn">
+            <i class="fas fa-tv"></i> قنوات البث المباشر
+        </a>
+        
+        <a href="film.html" class="btn">
+            <i class="fas fa-film"></i> الأفلام والمسلسلات
+        </a>
+    </div>
 
     <script>
-        // إعداد Firebase
-        const firebaseConfig = {
-            apiKey: "AIzaSyAI21TvGX8jjTbEIDww5GEKcxM9zL6Gkn8",
-            authDomain: "ak-sport-a985e.firebaseapp.com",
-            databaseURL: "https://ak-sport-a985e-default-rtdb.firebaseio.com/",
-            projectId: "ak-sport-a985e",
-            appId: "1:922662521404:android:be257019ae9c69f6ddd139"
-        };
-
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.database().ref().child("film");
-
-        // جلب البيانات
-        db.once("value")
-            .then(snapshot => {
-                console.log("البيانات المسترجعة:", snapshot.val());
-                const data = snapshot.val();
-                if (!data) {
-                    alert("لا توجد بيانات!");
-                    return;
-                }
-
-                const gridContainer = document.getElementById("moviesGrid");
-                gridContainer.innerHTML = "";
-
-                Object.keys(data).forEach((key) => {
-                    const movie = data[key];
-
-                    if (!movie.img || !movie.name) return;
-
-                    const movieDiv = document.createElement("div");
-                    movieDiv.className = "movie-item";
-                    movieDiv.innerHTML = `
-                        <img src="${movie.img}" alt="${movie.name}">
-                        <div class="movie-name">${movie.name}</div>
-                    `;
-
-                    // توجيه المستخدم إلى صفحة التفاصيل
-                    movieDiv.onclick = () => {
-                        window.location.href = `episod.html?id=${key}`;
-                    };
-
-                    gridContainer.appendChild(movieDiv);
-                });
-            })
-            .catch(error => {
-                console.error("خطأ في جلب البيانات:", error);
-                alert("فشل تحميل البيانات!");
-            });
+        function goToSearch() {
+            window.location.href = "search.html";
+        }
     </script>
 
 </body>
