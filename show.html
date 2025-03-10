@@ -22,10 +22,9 @@
             flex-direction: column;
             align-items: center;
             height: 100vh;
-            overflow: hidden; /* منع التمرير العام */
+            overflow: hidden;
         }
 
-        /* المشغل */
         .video-container {
             width: 100%;
             max-width: 800px;
@@ -38,7 +37,6 @@
             background: black;
         }
 
-        /* شريط المعلومات */
         #channelInfo {
             width: 100%;
             max-width: 800px;
@@ -69,17 +67,11 @@
             font-weight: bold;
         }
 
-        #channelCategory {
-            font-size: 16px;
-            opacity: 0.8;
-        }
-
-        /* قائمة القنوات بتنسيق GridView */
         .grid-container {
             width: 100%;
             max-width: 800px;
             flex: 1;
-            overflow-y: auto; /* تفعيل التمرير */
+            overflow-y: auto;
             background: #181C25;
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
@@ -104,7 +96,7 @@
 
         .grid-item img {
             width: 100%;
-            height: 100px; /* تكبير الصورة */
+            height: 100px;
             object-fit: cover;
             border-bottom: 2px solid white;
         }
@@ -120,7 +112,6 @@
             padding: 5px;
         }
 
-        /* تثبيت التخطيط العام */
         .container {
             display: flex;
             flex-direction: column;
@@ -133,26 +124,21 @@
 <body>
 
     <div class="container">
-        <!-- مشغل الفيديو -->
         <div class="video-container">
             <video id="videoPlayer" controls autoplay></video>
         </div>
 
-        <!-- شريط المعلومات -->
         <div id="channelInfo">
             <img id="channelImage" src="" alt="صورة العرض">
             <div id="channelText">
                 <div id="channelName">اسم العرض</div>
-                <div id="channelCategory">تصنيف العرض</div>
             </div>
         </div>
 
-        <!-- GridView للقنوات -->
         <div class="grid-container" id="channelGrid"></div>
     </div>
 
     <script>
-        // إعداد Firebase
         const firebaseConfig = {
             apiKey: "AlzaSyAI21TvGX8jjTbEIDww5GEKcxM9zL6Gkn8",
             authDomain: "ak-sport-a985e.firebaseapp.com",
@@ -166,7 +152,6 @@
 
         let firstShow = null;
 
-        // جلب البيانات
         db.once("value")
             .then(snapshot => {
                 console.log("البيانات المسترجعة:", snapshot.val());
@@ -188,7 +173,7 @@
 
                     const div = document.createElement("div");
                     div.className = "grid-item";
-                    div.innerHTML = `<img src="${item.image}" alt="${item.name}"> <span>${item.name}</span>`;
+                    div.innerHTML = `<img src="${item.img}" alt="${item.name}"> <span>${item.name}</span>`;
                     div.onclick = () => playStream(item);
                     grid.appendChild(div);
                 });
@@ -207,9 +192,8 @@
             player.src = show.url;
             player.play();
 
-            document.getElementById("channelImage").src = show.image;
+            document.getElementById("channelImage").src = show.img;
             document.getElementById("channelName").textContent = show.name;
-            document.getElementById("channelCategory").textContent = show.category;
         }
     </script>
 
