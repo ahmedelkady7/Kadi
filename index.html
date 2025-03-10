@@ -3,113 +3,124 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>البث المباشر</title>
-    <link rel="stylesheet" href="styles.css">
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js"></script>
+    <title>الأفلام والمسلسلات</title>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Cairo', sans-serif;
+        }
+
+        body {
+            background: #181C25;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        h1 {
+            color: white;
+            margin-bottom: 20px;
+        }
+
+        /* تصميم الشبكة */
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 10px;
+            width: 100%;
+            max-width: 800px;
+        }
+
+        .movie-item {
+            background: #202731;
+            border-radius: 10px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .movie-item:hover {
+            transform: scale(1.05);
+        }
+
+        .movie-item img {
+            width: 100%;
+            height: 170px;
+            object-fit: cover;
+        }
+
+        .movie-name {
+            text-align: center;
+            padding: 5px;
+            color: white;
+            font-size: 14px;
+            font-weight: bold;
+        }
+    </style>
 </head>
 <body>
 
-    <!-- الشريط العلوي -->
-    <header>
-        <div class="logo">Cortex TV</div>
-        <div class="search-container">
-            <input type="text" id="searchInput" placeholder="ابحث عن محتوى..." onkeyup="filterContent()">
-            <img src="search-icon.png" alt="بحث" class="search-icon" onclick="toggleSearch()">
-        </div>
-        <div class="nav-icons">
-            <img src="tv-icon.png" alt="القنوات" onclick="goToChannels()">
-            <img src="movies-icon.png" alt="أفلام ومسلسلات" onclick="goToMovies()">
-            <img src="live-icon.png" alt="البث المباشر" onclick="goToLive()">
-        </div>
-    </header>
-
-    <!-- الأقسام -->
-    <section class="content-section">
-        <h2>📺 القنوات التلفزيونية</h2>
-        <div id="channelsList" class="horizontal-list"></div>
-    </section>
-
-    <section class="content-section">
-        <h2>🎬 أفلام ومسلسلات</h2>
-        <div id="moviesList" class="horizontal-list"></div>
-    </section>
-
-    <section class="content-section">
-        <h2>🔴 البث المباشر</h2>
-        <div id="liveList" class="horizontal-list"></div>
-    </section>
+    <h1>الأفلام والمسلسلات</h1>
+    <div class="grid-container" id="moviesGrid"></div>
 
     <script>
-        // تكوين Firebase
+        // إعداد Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyAI21TvGX8jjTbEIDww5GEKcxM9zL6Gkn8",
             authDomain: "ak-sport-a985e.firebaseapp.com",
-            databaseURL: "https://ak-sport-a985e-default-rtdb.firebaseio.com",
+            databaseURL: "https://ak-sport-a985e-default-rtdb.firebaseio.com/",
             projectId: "ak-sport-a985e",
-            storageBucket: "ak-sport-a985e.appspot.com",
-            messagingSenderId: "922662521404",
-            appId: "1:922662521404:web:be257019ae9c69f6ddd139"
+            appId: "1:922662521404:android:be257019ae9c69f6ddd139"
         };
+
         firebase.initializeApp(firebaseConfig);
-        const db = firebase.database();
+        const db = firebase.database().ref().child("film");
 
-        // تحميل البيانات من Firebase
-        function loadContent(ref, listId) {
-            db.ref(ref).once("value", (snapshot) => {
-                let data = snapshot.val();
-                let list = document.getElementById(listId);
-                list.innerHTML = "";
-                for (let key in data) {
-                    let item = data[key];
-                    let element = `<div class="card" onclick="watch('${item.link}')">
-                                    <img src="${item.img || 'default-thumbnail.jpg'}" alt="${item.name}">
-                                    <p>${item.name}</p>
-                                </div>`;
-                    list.innerHTML += element;
+        // جلب البيانات
+        db.once("value")
+            .then(snapshot => {
+                console.log("البيانات المسترجعة:", snapshot.val());
+                const data = snapshot.val();
+                if (!data) {
+                    alert("لا توجد بيانات!");
+                    return;
                 }
+
+                const gridContainer = document.getElementById("moviesGrid");
+                gridContainer.innerHTML = "";
+
+                Object.keys(data).forEach((key) => {
+                    const movie = data[key];
+
+                    if (!movie.img || !movie.name) return;
+
+                    const movieDiv = document.createElement("div");
+                    movieDiv.className = "movie-item";
+                    movieDiv.innerHTML = `
+                        <img src="${movie.img}" alt="${movie.name}">
+                        <div class="movie-name">${movie.name}</div>
+                    `;
+
+                    // توجيه المستخدم إلى صفحة التفاصيل
+                    movieDiv.onclick = () => {
+                        window.location.href = `episod.html?id=${key}`;
+                    };
+
+                    gridContainer.appendChild(movieDiv);
+                });
+            })
+            .catch(error => {
+                console.error("خطأ في جلب البيانات:", error);
+                alert("فشل تحميل البيانات!");
             });
-        }
-
-        function watch(link) {
-            window.open(link, "_blank");
-        }
-
-        function goToChannels() {
-            window.location.href = "live2.html";
-        }
-
-        function goToMovies() {
-            window.location.href = "film.html";
-        }
-
-        function goToLive() {
-            window.location.href = "show.html";
-        }
-
-        function toggleSearch() {
-            let searchInput = document.getElementById("searchInput");
-            searchInput.classList.toggle("expanded");
-            if (searchInput.classList.contains("expanded")) {
-                searchInput.focus();
-            }
-        }
-
-        function filterContent() {
-            let input = document.getElementById("searchInput").value.toLowerCase();
-            let items = document.getElementsByClassName("card");
-            for (let item of items) {
-                let name = item.getElementsByTagName("p")[0].innerText.toLowerCase();
-                item.style.display = name.includes(input) ? "block" : "none";
-            }
-        }
-
-        // تحميل البيانات عند تشغيل الصفحة
-        window.onload = function () {
-            loadContent("ak_tv_2", "channelsList");
-            loadContent("film", "moviesList");
-            loadContent("show", "liveList");
-        };
     </script>
+
 </body>
 </html>
