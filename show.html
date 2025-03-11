@@ -70,11 +70,11 @@
         .grid-container {
             width: 100%;
             max-width: 800px;
-            flex: 1;
-            overflow-y: auto;
+            height: calc(100vh - 400px); /* ارتفاع مناسب */
+            overflow-y: auto; /* التمرير العمودي */
             background: #181C25;
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(3, 1fr); /* 3 عناصر في كل صف */
             gap: 10px;
             padding: 10px;
             align-content: start;
