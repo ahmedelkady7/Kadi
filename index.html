@@ -25,11 +25,10 @@
             justify-content: flex-start;
             height: 100vh;
             padding: 20px;
-            opacity: 0;
-            transition: opacity 1s ease-in-out;
         }
 
-        .logo-container {
+        /* شاشة تحميل اللوجو */
+        .splash-screen {
             position: fixed;
             top: 0;
             left: 0;
@@ -37,16 +36,18 @@
             height: 100%;
             background: #181C25;
             display: flex;
-            justify-content: center;
             align-items: center;
-            z-index: 100;
+            justify-content: center;
+            z-index: 9999;
         }
 
-        .logo-container img {
-            width: 150px;
+        .splash-screen img {
+            width: 150px; /* حجم اللوجو */
+            height: auto;
         }
 
-        .search-bar-container {
+        /* شريط البحث والصورة */
+        .top-bar {
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -56,7 +57,7 @@
         }
 
         .search-bar {
-            width: 85%;
+            flex: 1;
             position: relative;
         }
 
@@ -81,15 +82,17 @@
             cursor: pointer;
         }
 
-        .profile-icon {
-            width: 40px;
-            height: 40px;
+        /* صورة الحساب */
+        .account-icon {
+            width: 45px;
+            height: 45px;
             border-radius: 50%;
-            background: url('https://via.placeholder.com/40') no-repeat center center / cover;
+            object-fit: cover;
+            margin-left: 10px;
             cursor: pointer;
-            border: 2px solid white;
         }
 
+        /* الأزرار */
         .container {
             display: flex;
             flex-direction: column;
@@ -126,24 +129,26 @@
 </head>
 <body>
 
-    <!-- شاشة البداية مع اللوجو -->
-    <div class="logo-container" id="logoScreen">
-        <img src="logo.png" alt="Kadi Logo">
+    <!-- شاشة البداية باللوجو -->
+    <div class="splash-screen">
+        <img src="https://raw.githubusercontent.com/ahmedelkady7/Kadi/main/logo.jpg" alt="Kadi Logo">
     </div>
 
-    <div class="search-bar-container">
+    <!-- شريط البحث مع صورة الحساب -->
+    <div class="top-bar">
         <div class="search-bar">
             <input type="text" placeholder="ابحث هنا..." onclick="goToSearch()">
             <i class="fas fa-search" onclick="goToSearch()"></i>
         </div>
-        <div class="profile-icon" onclick="goToAccount()"></div>
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRJAQBvEMI-LGU_TZ3EpydbYmXXee0G8f_ihGrccB0GZyhWUDIJAde34Q7V&s=10" 
+             alt="Account" class="account-icon" onclick="goToAccount()">
     </div>
 
     <div class="container">
         <a href="live2.html" class="btn">
             <i class="fas fa-tv"></i> القنوات التلفزيونية 
         </a>
-
+        
         <a href="film.html" class="btn">
             <i class="fas fa-film"></i> الأفلام والمسلسلات
         </a>
@@ -166,11 +171,12 @@
             window.location.href = "account.html";
         }
 
-        // تشغيل شاشة البداية وإخفاؤها بعد 3 ثوانٍ
-        setTimeout(() => {
-            document.getElementById("logoScreen").style.display = "none";
-            document.body.style.opacity = "1";
-        }, 3000);
+        // إخفاء شاشة اللوجو بعد 3 ثواني
+        window.onload = function() {
+            setTimeout(function() {
+                document.querySelector('.splash-screen').style.display = 'none';
+            }, 3000);
+        };
     </script>
 
 </body>
