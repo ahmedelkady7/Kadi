@@ -27,15 +27,16 @@
         }
 
         .video-container {
-            width: 80%;
-            height: 30vh;
+            width: 90%;
+            height: 50vh;
             background: black;
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 10px;
+            border-radius: 15px;
             overflow: hidden;
             position: relative;
+            max-width: 1200px;
         }
 
         iframe {
@@ -46,25 +47,33 @@
 
         .info-bar {
             margin-top: 15px;
-            width: 80%;
+            width: 90%;
+            max-width: 1200px;
             padding: 15px;
             background: #202731;
-            border-radius: 10px;
+            border-radius: 15px;
             font-size: 18px;
             font-weight: bold;
         }
 
         .ads-space {
             margin-top: 20px;
-            width: 80%;
+            width: 90%;
+            max-width: 1200px;
             height: 150px;
             background: #2C3748;
-            border-radius: 10px;
+            border-radius: 15px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 16px;
             color: #FFD700;
+        }
+
+        @media (max-width: 768px) {
+            .video-container {
+                height: 40vh; /* تقليل الارتفاع قليلاً على الشاشات الصغيرة */
+            }
         }
 
     </style>
