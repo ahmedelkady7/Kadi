@@ -43,7 +43,7 @@
             background: #2C3748;
         }
 
-        .match-card img {
+        .team-logo {
             width: 50px;
             height: 50px;
             border-radius: 50%;
@@ -62,8 +62,9 @@
 
         .details {
             font-size: 14px;
-            color: #FFD700; /* اللون الأصفر بدلاً من الأحمر */
+            color: #FFD700;
         }
+
     </style>
 </head>
 <body>
@@ -72,7 +73,7 @@
     <div id="matches"></div>
 
     <script>
-        // تكوين Firebase باستخدام البيانات الجديدة
+        // تكوين Firebase
         const firebaseConfig = {
             apiKey: "AlzaSyAI21TvGX8jjTbEIDww5GEKcxM9zL6Gkn8",
             authDomain: "ak-sport-a985e.firebaseapp.com",
@@ -86,7 +87,6 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
-        // جلب بيانات المباريات من `match`
         function fetchUpcomingMatches() {
             db.ref('match').once('value', snapshot => {
                 const matchesDiv = document.getElementById('matches');
@@ -98,18 +98,18 @@
 
                     const matchCard = document.createElement('div');
                     matchCard.className = 'match-card';
-                    
-                    // عند الضغط، ينقل إلى صفحة Player.html مع تمرير البيانات
+
                     matchCard.onclick = () => {
                         window.location.href = `Player.html?url=${encodeURIComponent(data.channel_url)}&name=${encodeURIComponent(matchName)}`;
                     };
 
                     matchCard.innerHTML = `
-                        <img src="${data.img1}" alt="${data.team1} vs ${data.team2}">
+                        <img src="${data.img1}" alt="${data.team1}" class="team-logo">
                         <div class="match-info">
                             <div class="name">${matchName}</div>
                             <div class="details">${data.cup} - ${data.date} - ${data.time}</div>
                         </div>
+                        <img src="${data.img2}" alt="${data.team2}" class="team-logo">
                     `;
 
                     matchesDiv.appendChild(matchCard);
