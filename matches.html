@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>المباريات القادمة</title>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Cairo', sans-serif;
+        }
+
+        body {
+            background: #181C25;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+        }
+
+        .match-card {
+            background: #202731;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            transition: background 0.3s ease-in-out;
+        }
+
+        .match-card:hover {
+            background: #2C3748;
+        }
+
+        .match-card img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .match-info {
+            flex: 1;
+            text-align: center;
+        }
+
+        .name {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .details {
+            font-size: 14px;
+            color: #FFD700;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>المباريات القادمة</h1>
+    <div id="matches"></div>
+
+    <script>
+        // تكوين Firebase باستخدام البيانات الجديدة
+        const firebaseConfig = {
+            apiKey: "AlzaSyAI21TvGX8jjTbEIDww5GEKcxM9zL6Gkn8",
+            authDomain: "ak-sport-a985e.firebaseapp.com",
+            databaseURL: "https://ak-sport-a985e-default-rtdb.firebaseio.com/",
+            projectId: "ak-sport-a985e",
+            storageBucket: "ak-sport-a985e.appspot.com",
+            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+            appId: "1:922662521404:android:be257019ae9c69f6ddd139"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
+        // جلب بيانات المباريات من `match`
+        function fetchUpcomingMatches() {
+            db.ref('match').once('value', snapshot => {
+                const matchesDiv = document.getElementById('matches');
+                matchesDiv.innerHTML = '';
+
+                snapshot.forEach(match => {
+                    const data = match.val();
+
+                    const matchCard = document.createElement('div');
+                    matchCard.className = 'match-card';
+                    matchCard.onclick = () => window.open(data.channel_url, '_blank');
+
+                    matchCard.innerHTML = `
+                        <img src="${data.img1}" alt="${data.team1} vs ${data.team2}">
+                        <div class="match-info">
+                            <div class="name">${data.team1} VS ${data.team2}</div>
+                            <div class="details">${data.cup} - ${data.date} - ${data.time}</div>
+                        </div>
+                    `;
+
+                    matchesDiv.appendChild(matchCard);
+                });
+            });
+        }
+
+        window.onload = fetchUpcomingMatches;
+    </script>
+
+</body>
+</html>
