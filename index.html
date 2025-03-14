@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kadi live </title>
+    <title>Kadi Live</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');
@@ -22,21 +22,42 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
+            justify-content: flex-start;
             height: 100vh;
             padding: 20px;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
         }
 
-        h1 {
+        .logo-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #181C25;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+        }
+
+        .logo-container img {
+            width: 150px;
+        }
+
+        .search-bar-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            max-width: 400px;
             margin-bottom: 20px;
-            font-size: 24px;
         }
 
         .search-bar {
-            width: 100%;
-            max-width: 400px;
+            width: 85%;
             position: relative;
-            margin-bottom: 20px;
         }
 
         .search-bar input {
@@ -58,6 +79,15 @@
             font-size: 20px;
             color: white;
             cursor: pointer;
+        }
+
+        .profile-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: url('https://via.placeholder.com/40') no-repeat center center / cover;
+            cursor: pointer;
+            border: 2px solid white;
         }
 
         .container {
@@ -96,18 +126,24 @@
 </head>
 <body>
 
-    <div class="search-bar">
-        <input type="text" placeholder="ابحث هنا..." onclick="goToSearch()">
-        <i class="fas fa-search" onclick="goToSearch()"></i>
+    <!-- شاشة البداية مع اللوجو -->
+    <div class="logo-container" id="logoScreen">
+        <img src="logo.png" alt="Kadi Logo">
     </div>
 
-    <h1>مرحبًا بك في منصة البث المباشر</h1>
-    
+    <div class="search-bar-container">
+        <div class="search-bar">
+            <input type="text" placeholder="ابحث هنا..." onclick="goToSearch()">
+            <i class="fas fa-search" onclick="goToSearch()"></i>
+        </div>
+        <div class="profile-icon" onclick="goToAccount()"></div>
+    </div>
+
     <div class="container">
         <a href="live2.html" class="btn">
             <i class="fas fa-tv"></i> القنوات التلفزيونية 
         </a>
-        
+
         <a href="film.html" class="btn">
             <i class="fas fa-film"></i> الأفلام والمسلسلات
         </a>
@@ -115,12 +151,26 @@
         <a href="show.html" class="btn">
             <i class="fas fa-broadcast-tower"></i> عروض البث المباشر
         </a>
+
+        <a href="matches.html" class="btn">
+            <i class="fas fa-futbol"></i> المباريات
+        </a>
     </div>
 
     <script>
         function goToSearch() {
             window.location.href = "search.html";
         }
+
+        function goToAccount() {
+            window.location.href = "account.html";
+        }
+
+        // تشغيل شاشة البداية وإخفاؤها بعد 3 ثوانٍ
+        setTimeout(() => {
+            document.getElementById("logoScreen").style.display = "none";
+            document.body.style.opacity = "1";
+        }, 3000);
     </script>
 
 </body>
