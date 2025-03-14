@@ -62,7 +62,7 @@
 
         .details {
             font-size: 14px;
-            color: #FFD700;
+            color: #FFD700; /* اللون الأصفر بدلاً من الأحمر */
         }
     </style>
 </head>
@@ -94,15 +94,20 @@
 
                 snapshot.forEach(match => {
                     const data = match.val();
+                    const matchName = `${data.team1} VS ${data.team2}`;
 
                     const matchCard = document.createElement('div');
                     matchCard.className = 'match-card';
-                    matchCard.onclick = () => window.open(data.channel_url, '_blank');
+                    
+                    // عند الضغط، ينقل إلى صفحة Player.html مع تمرير البيانات
+                    matchCard.onclick = () => {
+                        window.location.href = `Player.html?url=${encodeURIComponent(data.channel_url)}&name=${encodeURIComponent(matchName)}`;
+                    };
 
                     matchCard.innerHTML = `
                         <img src="${data.img1}" alt="${data.team1} vs ${data.team2}">
                         <div class="match-info">
-                            <div class="name">${data.team1} VS ${data.team2}</div>
+                            <div class="name">${matchName}</div>
                             <div class="details">${data.cup} - ${data.date} - ${data.time}</div>
                         </div>
                     `;
