@@ -4,116 +4,95 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>المباريات القادمة</title>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Cairo', sans-serif;
-        }
-
         body {
-            background: #181C25;
+            font-family: Arial, sans-serif;
+            background-color: #222;
             color: white;
             text-align: center;
-            padding: 20px;
         }
-
-        h1 {
-            margin-bottom: 20px;
-        }
-
-        .match-card {
-            background: #202731;
-            border-radius: 10px;
+        .match-container {
+            background-color: #333;
             padding: 15px;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
+            margin: 10px auto;
+            width: 90%;
+            border-radius: 10px;
             cursor: pointer;
-            transition: background 0.3s ease-in-out;
         }
-
-        .match-card:hover {
-            background: #2C3748;
+        .match-container:hover {
+            background-color: #444;
         }
-
-        .match-card img {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            object-fit: cover;
-        }
-
-        .match-info {
-            flex: 1;
-            text-align: center;
-        }
-
-        .name {
-            font-size: 18px;
+        .time {
+            color: #FFD700; /* اللون الأصفر */
+            font-size: 20px;
             font-weight: bold;
         }
-
-        .details {
-            font-size: 14px;
-            color: #FFD700;
+        .date {
+            color: #00BFFF; /* اللون الأزرق السماوي */
+            font-size: 18px;
+        }
+        .cup {
+            color: #D3D3D3; /* اللون الأبيض/الرمادي */
+            font-size: 16px;
+        }
+        .teams {
+            font-size: 22px;
+            font-weight: bold;
+            margin-top: 10px;
         }
     </style>
 </head>
 <body>
 
-    <h1>المباريات القادمة</h1>
-    <div id="matches"></div>
+<h2>المباريات القادمة</h2>
+<div id="matches"></div>
 
-    <script>
-        // تكوين Firebase باستخدام البيانات الجديدة
-        const firebaseConfig = {
-            apiKey: "AlzaSyAI21TvGX8jjTbEIDww5GEKcxM9zL6Gkn8",
-            authDomain: "ak-sport-a985e.firebaseapp.com",
-            databaseURL: "https://ak-sport-a985e-default-rtdb.firebaseio.com/",
-            projectId: "ak-sport-a985e",
-            storageBucket: "ak-sport-a985e.appspot.com",
-            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-            appId: "1:922662521404:android:be257019ae9c69f6ddd139"
-        };
+<script>
+    // تكوين Firebase
+    const firebaseConfig = {
+        apiKey: "AlzaSyAI21TvGX8jjTbEIDww5GEKcxM9zL6Gkn8",
+        authDomain: "ak-sport-a985e.firebaseapp.com",
+        databaseURL: "https://ak-sport-a985e-default-rtdb.firebaseio.com",
+        projectId: "ak-sport-a985e",
+        storageBucket: "ak-sport-a985e.appspot.com",
+        messagingSenderId: "922662521404",
+        appId: "1:922662521404:android:be257019ae9c69f6ddd139"
+    };
 
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.database();
+    // تهيئة Firebase
+    const app = firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
 
-        // جلب بيانات المباريات من `match`
-        function fetchUpcomingMatches() {
-            db.ref('match').once('value', snapshot => {
-                const matchesDiv = document.getElementById('matches');
-                matchesDiv.innerHTML = '';
+    // جلب البيانات من مسار "match"
+    database.ref("match").once("value", function(snapshot) {
+        const matchesDiv = document.getElementById("matches");
+        matchesDiv.innerHTML = ""; // تفريغ المحتوى السابق
+        snapshot.forEach(function(childSnapshot) {
+            const match = childSnapshot.val();
+            const matchDiv = document.createElement("div");
+            matchDiv.className = "match-container";
 
-                snapshot.forEach(match => {
-                    const data = match.val();
+            // توليد اسم المباراة (الفريق الأول VS الفريق الثاني)
+            const matchName = match.team1 + " VS " + match.team2;
 
-                    const matchCard = document.createElement('div');
-                    matchCard.className = 'match-card';
-                    matchCard.onclick = () => window.open(data.channel_url, '_blank');
+            matchDiv.innerHTML = `
+                <div class="time">${match.time}</div>
+                <div class="date">${match.date}</div>
+                <div class="cup">${match.cup}</div>
+                <div class="teams">${matchName}</div>
+            `;
 
-                    matchCard.innerHTML = `
-                        <img src="${data.img1}" alt="${data.team1} vs ${data.team2}">
-                        <div class="match-info">
-                            <div class="name">${data.team1} VS ${data.team2}</div>
-                            <div class="details">${data.cup} - ${data.date} - ${data.time}</div>
-                        </div>
-                    `;
+            // عند الضغط، ينقل إلى صفحة Player.html مع تمرير البيانات
+            matchDiv.onclick = function() {
+                window.location.href = `Player.html?url=${encodeURIComponent(match.channel_url)}&name=${encodeURIComponent(matchName)}`;
+            };
 
-                    matchesDiv.appendChild(matchCard);
-                });
-            });
-        }
-
-        window.onload = fetchUpcomingMatches;
-    </script>
+            matchesDiv.appendChild(matchDiv);
+        });
+    });
+</script>
 
 </body>
 </html>
