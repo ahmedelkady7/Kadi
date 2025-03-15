@@ -3,83 +3,110 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مشغل الفيديو - قاضي</title>
+    <title>مشغل الفيديو</title>
     <style>
-        /* خلفية الصفحة */
-        body {
+        * {
             margin: 0;
             padding: 0;
-            background: linear-gradient(to right, #10131a, #181c25);
-            color: white;
+            box-sizing: border-box;
             font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-color: #181c25;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        .video-container {
+            width: 100%;
+            max-width: 900px;
+            position: relative;
+        }
+
+        video {
+            width: 100%;
+            height: auto;
+            border-radius: 10px;
+            background-color: black;
+        }
+
+        .video-info {
+            width: 100%;
+            max-width: 900px;
+            padding: 10px;
+            background-color: #22252e;
+            border-radius: 10px;
+            margin-top: 10px;
             text-align: center;
         }
 
-        /* حاوية الفيديو */
-        .video-container {
-            width: 100%;
-            max-width: 100%;
-            margin: 0 auto;
-            position: relative;
-            background: rgba(0, 0, 0, 0.7);
-            padding: 10px;
-        }
-
-        /* مشغل الفيديو */
-        .video-player {
-            width: 100%;
-            height: 50vh; /* 50% من الشاشة */
-            background: black;
-        }
-
-        /* معلومات الفيديو */
-        .video-info {
-            margin-top: 10px;
-            font-size: 20px;
+        .video-title {
+            font-size: 18px;
             font-weight: bold;
+            margin-bottom: 5px;
         }
 
-        /* قسم الإعلانات */
-        .ads-section {
-            margin-top: 20px;
+        .ad-container {
+            width: 100%;
+            max-width: 900px;
+            margin-top: 15px;
+            text-align: center;
         }
 
-        .ads-section img {
-            width: 90%;
-            max-width: 600px;
+        .ad-placeholder {
+            width: 100%;
+            height: 120px;
+            background-color: #333842;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             border-radius: 10px;
-            opacity: 0.8;
+            font-size: 16px;
+            color: #bbb;
         }
     </style>
 </head>
 <body>
 
     <div class="video-container">
-        <video id="videoPlayer" class="video-player" controls>
+        <video id="videoPlayer" controls>
             <source id="videoSource" src="" type="video/mp4">
             متصفحك لا يدعم تشغيل الفيديو.
         </video>
-        <div class="video-info">
-            <h2 id="videoTitle">عنوان الفيديو</h2>
-        </div>
     </div>
 
-    <div class="ads-section">
-        <img src="ad-placeholder.jpg" alt="إعلان">
+    <div class="video-info">
+        <div class="video-title" id="videoTitle">جاري التحميل...</div>
+    </div>
+
+    <div class="ad-container">
+        <div class="ad-placeholder">إعلان يظهر هنا</div>
     </div>
 
     <script>
-        // جلب القيم الممررة في الرابط
-        const urlParams = new URLSearchParams(window.location.search);
-        const videoURL = urlParams.get('url');
-        const videoTitle = urlParams.get('title');
+        // استخراج القيم من الرابط
+        function getQueryParam(param) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(param);
+        }
 
-        // تعيين القيم في المشغل
-        document.getElementById('videoSource').src = videoURL || 'default.mp4';
-        document.getElementById('videoTitle').innerText = videoTitle || 'فيديو افتراضي';
+        // تعيين اسم الفيديو والرابط
+        const videoURL = getQueryParam("url");
+        const videoName = getQueryParam("name");
 
-        // إعادة تحميل المشغل بعد تعيين المصدر
-        document.getElementById('videoPlayer').load();
+        if (videoURL) {
+            document.getElementById("videoSource").src = videoURL;
+            document.getElementById("videoPlayer").load();
+        }
+
+        if (videoName) {
+            document.getElementById("videoTitle").textContent = videoName;
+        }
     </script>
 
 </body>
