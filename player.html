@@ -5,102 +5,143 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>مشغل الفيديو</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');
-
-        * {
+        body {
+            background-color: #121212;
+            color: white;
+            font-family: Arial, sans-serif;
+            text-align: center;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
-            font-family: 'Cairo', sans-serif;
         }
-
-        body {
-            background: #181C25;
-            color: white;
-            text-align: center;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: flex-start;
-            height: 100vh;
-            padding: 20px;
-        }
-
         .video-container {
-            width: 100%;
-            height: 50vh;
-            background: black;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
             position: relative;
-        }
-
-        iframe {
             width: 100%;
-            height: 100%;
-            border: none;
+            max-width: 100%;
+            background: black;
         }
-
-        .video-title {
-            margin-top: 10px;
-            font-size: 20px;
-            font-weight: bold;
-            color: #FFD700;
+        video {
+            width: 100%;
+            height: auto;
         }
-
-        .ads-space {
-            margin-top: 20px;
-            width: 90%;
-            max-width: 1200px;
-            height: 150px;
-            background: #2C3748;
-            border-radius: 15px;
+        .controls {
             display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 16px;
-            color: #FFD700;
+            justify-content: space-around;
+            padding: 10px;
+            background: #1e1e1e;
+            border-radius: 5px;
+            margin: 10px auto;
+            max-width: 600px;
         }
-
-        @media (max-width: 768px) {
-            .video-container {
-                height: 40vh;
-            }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            cursor: pointer;
+            border-radius: 5px;
         }
-
+        button:hover {
+            background: #0056b3;
+        }
+        .info-bar {
+            margin: 10px 0;
+            padding: 10px;
+            background: #1e1e1e;
+            border-radius: 5px;
+        }
+        .comments, .ad-section {
+            background: #1e1e1e;
+            padding: 10px;
+            margin: 10px;
+            border-radius: 5px;
+        }
+        .comments h3, .ad-section h3 {
+            color: #f1c40f;
+        }
+        .ad-section img {
+            width: 100%;
+            border-radius: 5px;
+        }
     </style>
 </head>
 <body>
 
+    <!-- مشغل الفيديو -->
     <div class="video-container">
-        <iframe id="videoPlayer" allowfullscreen></iframe>
+        <video id="videoPlayer" controls>
+            <source src="video.mp4" type="video/mp4">
+            متصفحك لا يدعم تشغيل الفيديو.
+        </video>
     </div>
 
-    <div class="video-title" id="videoTitle">جاري التحميل...</div>
+    <!-- شريط المعلومات -->
+    <div class="info-bar">
+        <h2 id="videoTitle">عنوان الفيديو</h2>
+    </div>
 
-    <div class="ads-space">مساحة إعلانية</div>
+    <!-- أدوات التحكم -->
+    <div class="controls">
+        <button onclick="rewind()">⏪ 10 ثواني</button>
+        <button onclick="togglePlay()">▶ / ⏸</button>
+        <button onclick="fastForward()">⏩ 10 ثواني</button>
+        <button onclick="toggleFullScreen()">⛶ ملء الشاشة</button>
+        <button onclick="changeSpeed()">⚡ السرعة</button>
+    </div>
+
+    <!-- التعليقات -->
+    <div class="comments">
+        <h3>التعليقات</h3>
+        <p>🚀 تحديث قادم لدعم التعليقات!</p>
+    </div>
+
+    <!-- الإعلان -->
+    <div class="ad-section">
+        <h3>إعلان</h3>
+        <img src="ad-placeholder.jpg" alt="إعلان">
+    </div>
 
     <script>
-        // استخراج البيانات من الـ URL
-        function getQueryParam(param) {
-            const urlParams = new URLSearchParams(window.location.search);
-            return urlParams.get(param);
+        let video = document.getElementById("videoPlayer");
+
+        function togglePlay() {
+            if (video.paused) {
+                video.play();
+            } else {
+                video.pause();
+            }
         }
 
-        const videoURL = getQueryParam('url');
-        const videoName = getQueryParam('name');
-
-        // تعيين الفيديو والعنوان
-        if (videoURL) {
-            document.getElementById('videoPlayer').src = videoURL;
-        } else {
-            document.getElementById('videoPlayer').innerHTML = "خطأ: لم يتم العثور على رابط الفيديو!";
+        function rewind() {
+            video.currentTime -= 10;
         }
 
-        document.getElementById('videoTitle').innerText = videoName || "فيديو بدون عنوان";
+        function fastForward() {
+            video.currentTime += 10;
+        }
 
+        function toggleFullScreen() {
+            if (!document.fullscreenElement) {
+                video.requestFullscreen();
+            } else {
+                document.exitFullscreen();
+            }
+        }
+
+        function changeSpeed() {
+            let speeds = [0.5, 1, 1.5, 2];
+            let currentSpeed = speeds.indexOf(video.playbackRate);
+            let nextSpeed = (currentSpeed + 1) % speeds.length;
+            video.playbackRate = speeds[nextSpeed];
+            alert("سرعة التشغيل: " + speeds[nextSpeed] + "x");
+        }
+
+        // جلب الفيديو والاسم من رابط الصفحة
+        let params = new URLSearchParams(window.location.search);
+        let videoUrl = params.get("url");
+        let videoName = params.get("name");
+
+        if (videoUrl) video.src = videoUrl;
+        if (videoName) document.getElementById("videoTitle").innerText = videoName;
     </script>
 
 </body>
