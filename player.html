@@ -45,7 +45,7 @@
             display: flex;
             align-items: center;
             padding: 10px;
-            background: linear-gradient(to bottom, #1E252F, #194643);
+            background: linear-gradient(to right, #1E252F, #194643);
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
         }
 
@@ -91,9 +91,9 @@
     <script>
         // استخراج البيانات من الـ URL
         const urlParams = new URLSearchParams(window.location.search);
-        const videoURL = urlParams.get('URL');
+        const videoURL = urlParams.get('url');
         const channelName = urlParams.get('name');
-        const channelImage = urlParams.get('IMG');
+        const channelImage = urlParams.get('img');
 
         // تعيين الرابط إلى مشغل الفيديو
         if (videoURL) {
