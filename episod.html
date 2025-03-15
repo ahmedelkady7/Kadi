@@ -131,10 +131,10 @@
                 if (data) {
                     // تحديث بيانات المسلسل
                     document.getElementById('cover').style.backgroundImage = `url(${data.cover})`;
-                    document.getElementById('seriesImg').src = data.img;
-                    document.getElementById('seriesTitle').textContent = data.name;
-                    document.getElementById('seriesViews').textContent = `عدد المشاهدات: ${data.view}`;
-                    document.getElementById('seriesAbout').textContent = data.about;
+                    document.getElementById('img').src = data.img;
+                    document.getElementById('name').textContent = data.name;
+                    document.getElementById('view').textContent = `عدد المشاهدات: ${data.view}`;
+                    document.getElementById('about').textContent = data.about;
 
                     // جلب الحلقات
                     const episodesContainer = document.getElementById('episodesList');
