@@ -39,9 +39,9 @@
             height: 170px;
             border-radius: 10px;
             position: absolute;
-            bottom: -40px;
+            bottom: 0px;
             left: 50%;
-            transform: translateX(-50%);
+            transform: translateX(-0%);
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
         }
 
@@ -152,7 +152,7 @@
                                 <div class="episode-title">${episode.name}</div>
                             `;
                             episodeDiv.onclick = () => {
-                                window.location.href = `player.html?url=${encodeURIComponent(episode.URL)}&name=${encodeURIComponent(episode.name)}&img=${encodeURIComponent(episode.img)}`;
+                                window.location.href = `player.html?url=${encodeURIComponent(episode.url)}&name=${encodeURIComponent(episode.name)}&img=${encodeURIComponent(episode.img)}`;
                             };
                             episodesContainer.appendChild(episodeDiv);
                         });
