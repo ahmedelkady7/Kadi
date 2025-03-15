@@ -28,44 +28,34 @@
             overflow: hidden;
         }
 
-        #channelInfo {
+        .search-container {
             width: 100%;
             max-width: 800px;
-            display: flex;
-            align-items: center;
             padding: 10px;
-            background: linear-gradient(45deg, #194643, #202731);
-            color: white;
+            background: #202731;
             position: sticky;
             top: 0;
-            z-index: 2;
-            border-radius: 10px;
+            z-index: 10;
         }
 
-        #channelInfo img {
-            width: 120px;
-            height: 70px;
-            border-radius: 10px;
-            margin-right: 10px;
-        }
-
-        #channelText {
-            text-align: left;
-        }
-
-        #channelName {
-            font-size: 20px;
-            font-weight: bold;
+        #searchInput {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            outline: none;
+            background: #2A2F3A;
+            color: white;
         }
 
         .grid-container {
             width: 100%;
             max-width: 800px;
-            height: calc(100vh - 100px);
+            height: calc(100vh - 60px); /* لتجنب تغطية البحث */
             overflow-y: auto;
-            background: #181C25;
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); /* تلقائي التكيف */
             gap: 10px;
             padding: 10px;
             align-content: start;
@@ -75,12 +65,10 @@
             background: linear-gradient(45deg, #222, #333);
             border-radius: 10px;
             text-align: center;
+            overflow: hidden;
             cursor: pointer;
             transition: transform 0.3s;
             position: relative;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
         }
 
         .grid-item:hover {
@@ -91,36 +79,32 @@
             width: 100%;
             height: 100px;
             object-fit: cover;
-            border-radius: 10px 10px 0 0;
+            border-bottom: 2px solid white;
         }
 
         .grid-item span {
+            position: absolute;
+            bottom: 0;
             width: 100%;
             background: rgba(0, 0, 0, 0.7);
             color: white;
             font-size: 14px;
             font-weight: bold;
             padding: 5px;
-            text-align: center;
-            border-radius: 0 0 10px 10px;
         }
-
     </style>
 </head>
 <body>
 
-    <div id="channelInfo">
-        <img id="channelImage" src="" alt="صورة العرض">
-        <div id="channelText">
-            <div id="channelName">حدد عرضًا للمشاهدة</div>
-        </div>
+    <div class="search-container">
+        <input type="text" id="searchInput" placeholder="ابحث عن القناة..." onkeyup="filterChannels()">
     </div>
 
     <div class="grid-container" id="channelGrid"></div>
 
     <script>
         const firebaseConfig = {
-            apiKey: "AlzaSyAI21TvGX8jjTbEIDww5GEKcxM9zL6Gkn8",
+            apiKey: "AIzaSyAI21TvGX8jjTbEIDww5GEKcxM9zL6Gkn8",
             authDomain: "ak-sport-a985e.firebaseapp.com",
             databaseURL: "https://ak-sport-a985e-default-rtdb.firebaseio.com/",
             projectId: "ak-sport-a985e",
@@ -130,38 +114,51 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database().ref("show");
 
+        let allShows = [];
+
         db.once("value")
             .then(snapshot => {
-                console.log("البيانات المسترجعة:", snapshot.val());
                 const data = snapshot.val();
                 if (!data) {
                     alert("لا توجد بيانات!");
                     return;
                 }
 
-                const grid = document.getElementById("channelGrid");
-                grid.innerHTML = "";
+                allShows = Object.keys(data).map(key => data[key]);
 
-                Object.keys(data).forEach(key => {
-                    const item = data[key];
-
-                    const div = document.createElement("div");
-                    div.className = "grid-item";
-                    div.innerHTML = `
-                        <img src="${item.img}" alt="${item.name}">
-                        <span>${item.name}</span>
-                    `;
-                    div.onclick = () => redirectToPlayer(item);
-                    grid.appendChild(div);
-                });
+                displayChannels(allShows);
             })
             .catch(error => {
                 console.error("خطأ في جلب البيانات:", error);
                 alert("فشل تحميل البيانات!");
             });
 
-        function redirectToPlayer(show) {
-            window.location.href = `player.html?name=${encodeURIComponent(show.name)}&url=${encodeURIComponent(show.url)}&img=${encodeURIComponent(show.img)}`;
+        function displayChannels(shows) {
+            const grid = document.getElementById("channelGrid");
+            grid.innerHTML = "";
+
+            shows.forEach(show => {
+                const div = document.createElement("div");
+                div.className = "grid-item";
+                div.innerHTML = `<img src="${show.img}" alt="${show.name}"> <span>${show.name}</span>`;
+                div.onclick = () => goToPlayer(show);
+                grid.appendChild(div);
+            });
+        }
+
+        function filterChannels() {
+            const query = document.getElementById("searchInput").value.toLowerCase();
+            const filtered = allShows.filter(show => show.name.toLowerCase().includes(query));
+            displayChannels(filtered);
+        }
+
+        function goToPlayer(show) {
+            const urlParams = new URLSearchParams();
+            urlParams.append("name", show.name);
+            urlParams.append("url", show.url);
+            urlParams.append("img", show.img);
+
+            window.location.href = `player.html?${urlParams.toString()}`;
         }
     </script>
 
