@@ -32,25 +32,25 @@
             background-position: center;
             position: relative;
         }
-/* صورة الفيلم */
-.series-img {
-    width: 120px;
-    height: 170px;
-    border-radius: 10px;
-    position: relative;
-    top: -40px; /* تحريك الصورة للأعلى لتتداخل مع الغلاف */
-    left: 30%;
-    transform: translateX(-30%);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-    border: 4px solid #181C25; /* إضافة إطار بنفس لون الخلفية */
-}
-        
+
+        /* صورة الفيلم في المنتصف */
+        .series-img {
+            width: 120px;
+            height: 170px;
+            border-radius: 10px;
+            position: relative;
+            top: -40px; /* تحريك الصورة للأعلى لتتداخل مع الغلاف */
+            left: 50%;
+            transform: translateX(-50%);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            border: 4px solid #181C25;
         }
 
         /* معلومات الفيلم */
         .series-info {
             text-align: center;
-            padding: 50px 20px 20px;
+            padding: 20px;
+            width: 90%;
         }
 
         .series-title {
@@ -107,17 +107,17 @@
 </head>
 <body>
 
-    <div class="cover" id="cover"></div> <!-- ✅ المعبر أولًا -->
+    <div class="cover" id="cover"></div> <!-- ✅ خلفية الفيلم -->
     
-    <img class="series-img" id="seriesImg" src="" alt="صورة الفيلم"> <!-- ✅ صورة الفيلم ثانيًا -->
+    <img class="series-img" id="seriesImg" src="" alt="صورة الفيلم"> <!-- ✅ صورة الفيلم -->
 
     <div class="series-info">
-        <div class="series-title" id="seriesTitle">اسم الفيلم</div> <!-- ✅ اسم الفيلم ثالثًا -->
-        <div class="series-views" id="seriesViews">عدد المشاهدات: 0</div> <!-- ✅ عدد المشاهدات رابعًا -->
-        <div class="series-description" id="seriesAbout">وصف الفيلم</div> <!-- ✅ الوصف خامسًا -->
+        <div class="series-title" id="seriesTitle">اسم الفيلم</div> <!-- ✅ اسم الفيلم -->
+        <div class="series-views" id="seriesViews">عدد المشاهدات: 0</div> <!-- ✅ عدد المشاهدات -->
+        <div class="series-description" id="seriesAbout">وصف الفيلم</div> <!-- ✅ الوصف -->
     </div>
 
-    <div class="episodes-list" id="episodesList"></div> <!-- ✅ قائمة الحلقات سادسًا -->
+    <div class="episodes-list" id="episodesList"></div> <!-- ✅ قائمة الحلقات -->
 
     <script>
         // استخراج ID من رابط الصفحة
