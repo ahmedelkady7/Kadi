@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مشاهدة المسلسل</title>
+    <title>مشاهدة الفيلم</title>
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');
@@ -33,8 +33,8 @@
             position: relative;
         }
 
-        /* صورة المسلسل */
-        .series-img {
+        /* صورة الفيلم */
+        .film-img {
             width: 120px;
             height: 170px;
             border-radius: 10px;
@@ -45,60 +45,27 @@
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
         }
 
-        /* معلومات المسلسل */
-        .series-info {
+        /* معلومات الفيلم */
+        .film-info {
             text-align: center;
             padding: 50px 20px 20px;
         }
 
-        .series-title {
+        .film-title {
             font-size: 22px;
             font-weight: bold;
         }
 
-        .series-views {
+        .film-views {
             margin-top: 5px;
             font-size: 14px;
             opacity: 0.8;
         }
 
-        .series-description {
+        .film-description {
             margin-top: 10px;
             font-size: 16px;
             opacity: 0.9;
-        }
-
-        /* قائمة الحلقات */
-        .episodes-list {
-            width: 90%;
-            margin-top: 20px;
-        }
-
-        .episode-item {
-            display: flex;
-            align-items: center;
-            background: #222831;
-            padding: 10px;
-            border-radius: 8px;
-            margin-bottom: 10px;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-
-        .episode-item:hover {
-            background: #303841;
-        }
-
-        .episode-img {
-            width: 80px;
-            height: 50px;
-            border-radius: 5px;
-            margin-right: 10px;
-        }
-
-        .episode-title {
-            font-size: 16px;
-            flex-grow: 1;
         }
 
     </style>
@@ -106,52 +73,33 @@
 <body>
 
     <div class="cover" id="cover"></div>
-    <img class="series-img" id="seriesImg" src="" alt="صورة المسلسل">
+    <img class="film-img" id="filmImg" src="" alt="صورة الفيلم">
 
-    <div class="series-info">
-        <div class="series-title" id="seriesTitle">اسم المسلسل</div>
-        <div class="series-views" id="seriesViews">عدد المشاهدات: 0</div>
-        <div class="series-description" id="seriesAbout">وصف المسلسل</div>
+    <div class="film-info">
+        <div class="film-title" id="filmTitle">اسم الفيلم</div>
+        <div class="film-views" id="filmViews">عدد المشاهدات: 0</div>
+        <div class="film-description" id="filmAbout">وصف الفيلم</div>
     </div>
-
-    <div class="episodes-list" id="episodesList"></div>
 
     <script>
         // استخراج ID من رابط الصفحة
         const urlParams = new URLSearchParams(window.location.search);
-        const seriesID = urlParams.get('id');
+        const filmID = urlParams.get('id');
 
         // رابط قاعدة البيانات
-        const firebaseURL = "https://ak-sport-a985e-default-rtdb.firebaseio.com/" + seriesID + ".json";
+        const firebaseURL = `https://ak-sport-a985e-default-rtdb.firebaseio.com/FILM/${filmID}.json`;
 
-        // جلب بيانات المسلسل من Firebase
+        // جلب بيانات الفيلم من Firebase
         fetch(firebaseURL)
             .then(response => response.json())
             .then(data => {
                 if (data) {
-                    // تحديث بيانات المسلسل
+                    // تحديث بيانات الفيلم
                     document.getElementById('cover').style.backgroundImage = `url(${data.cover})`;
-                    document.getElementById('img').src = data.img;
-                    document.getElementById('name').textContent = data.name;
-                    document.getElementById('view').textContent = `عدد المشاهدات: ${data.view}`;
-                    document.getElementById('about').textContent = data.about;
-
-                    // جلب الحلقات
-                    const episodesContainer = document.getElementById('episodesList');
-                    const episodes = JSON.parse(data.data);
-
-                    episodes.forEach(episode => {
-                        let episodeDiv = document.createElement('div');
-                        episodeDiv.className = 'episode-item';
-                        episodeDiv.innerHTML = `
-                            <img class="episode-img" src="${episode.img}" alt="صورة الحلقة">
-                            <div class="episode-title">${episode.name}</div>
-                        `;
-                        episodeDiv.onclick = () => {
-                            window.location.href = `player.html?URL=${encodeURIComponent(episode.URL)}&name=${encodeURIComponent(episode.name)}&IMG=${encodeURIComponent(episode.img)}`;
-                        };
-                        episodesContainer.appendChild(episodeDiv);
-                    });
+                    document.getElementById('filmImg').src = data.IMG;
+                    document.getElementById('filmTitle').textContent = data.name;
+                    document.getElementById('filmViews').textContent = `عدد المشاهدات: ${data.view}`;
+                    document.getElementById('filmAbout').textContent = data.about;
                 }
             })
             .catch(error => console.error("فشل في تحميل البيانات", error));
