@@ -32,30 +32,39 @@
             width: 100%;
             max-width: 800px;
             padding: 10px;
-            background: #202731;
+            background: #181C25;
             position: sticky;
             top: 0;
             z-index: 10;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .search-container i {
+            font-size: 20px;
+            color: white;
         }
 
         #searchInput {
-            width: 100%;
+            flex: 1;
             padding: 10px;
             font-size: 16px;
             border: none;
             border-radius: 5px;
             outline: none;
-            background: #2A2F3A;
+            background: #202731;
             color: white;
+            text-align: right;
         }
 
         .grid-container {
             width: 100%;
             max-width: 800px;
-            height: calc(100vh - 60px); /* لتجنب تغطية البحث */
+            height: calc(100vh - 60px);
             overflow-y: auto;
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); /* تلقائي التكيف */
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
             gap: 10px;
             padding: 10px;
             align-content: start;
@@ -93,10 +102,13 @@
             padding: 5px;
         }
     </style>
+
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 </head>
 <body>
 
     <div class="search-container">
+        <i class="fas fa-search"></i>
         <input type="text" id="searchInput" placeholder="ابحث عن القناة..." onkeyup="filterChannels()">
     </div>
 
@@ -115,6 +127,7 @@
         const db = firebase.database().ref("show");
 
         let allShows = [];
+        let displayedShows = 10;
 
         db.once("value")
             .then(snapshot => {
@@ -126,18 +139,18 @@
 
                 allShows = Object.keys(data).map(key => data[key]);
 
-                displayChannels(allShows);
+                displayChannels();
             })
             .catch(error => {
                 console.error("خطأ في جلب البيانات:", error);
                 alert("فشل تحميل البيانات!");
             });
 
-        function displayChannels(shows) {
+        function displayChannels() {
             const grid = document.getElementById("channelGrid");
             grid.innerHTML = "";
 
-            shows.forEach(show => {
+            allShows.slice(0, displayedShows).forEach(show => {
                 const div = document.createElement("div");
                 div.className = "grid-item";
                 div.innerHTML = `<img src="${show.img}" alt="${show.name}"> <span>${show.name}</span>`;
@@ -149,7 +162,8 @@
         function filterChannels() {
             const query = document.getElementById("searchInput").value.toLowerCase();
             const filtered = allShows.filter(show => show.name.toLowerCase().includes(query));
-            displayChannels(filtered);
+            displayedShows = filtered.length;
+            displayChannels();
         }
 
         function goToPlayer(show) {
@@ -160,6 +174,14 @@
 
             window.location.href = `player.html?${urlParams.toString()}`;
         }
+
+        document.getElementById("channelGrid").addEventListener("scroll", function () {
+            if (this.scrollTop + this.clientHeight >= this.scrollHeight - 20) {
+                displayedShows += 10;
+                displayChannels();
+            }
+        });
+
     </script>
 
 </body>
