@@ -3,123 +3,159 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>قائمة الحلقات</title>
+    <title>مشاهدة المسلسل</title>
+
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Cairo', sans-serif;
+        }
+
         body {
-            background-color: #121212;
+            background: #181C25;
             color: white;
-            text-align: center;
-            font-family: Arial, sans-serif;
-        }
-        .container {
-            max-width: 800px;
-            margin: auto;
-            padding: 20px;
-        }
-        .episodes-list {
             display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 10px;
-            margin-top: 20px;
+            flex-direction: column;
+            align-items: center;
+            padding-bottom: 20px;
         }
-        .episode-item {
-            width: 150px;
-            background: #1e1e1e;
-            padding: 10px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-        .episode-item:hover {
-            transform: scale(1.05);
-        }
-        .episode-item img {
+
+        /* خلفية الغلاف */
+        .cover {
             width: 100%;
-            height: auto;
-            border-radius: 5px;
+            height: 40vh;
+            background-size: cover;
+            background-position: center;
+            position: relative;
         }
-        .episode-name {
-            margin-top: 8px;
-            font-size: 14px;
+
+        /* صورة المسلسل */
+        .series-img {
+            width: 120px;
+            height: 170px;
+            border-radius: 10px;
+            position: absolute;
+            bottom: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        /* معلومات المسلسل */
+        .series-info {
+            text-align: center;
+            padding: 50px 20px 20px;
+        }
+
+        .series-title {
+            font-size: 22px;
             font-weight: bold;
         }
+
+        .series-views {
+            margin-top: 5px;
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        .series-description {
+            margin-top: 10px;
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        /* قائمة الحلقات */
+        .episodes-list {
+            width: 90%;
+            margin-top: 20px;
+        }
+
+        .episode-item {
+            display: flex;
+            align-items: center;
+            background: #222831;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .episode-item:hover {
+            background: #303841;
+        }
+
+        .episode-img {
+            width: 80px;
+            height: 50px;
+            border-radius: 5px;
+            margin-right: 10px;
+        }
+
+        .episode-title {
+            font-size: 16px;
+            flex-grow: 1;
+        }
+
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>قائمة الحلقات</h1>
-        <p id="movieName" style="font-size: 18px; color: #bbb;"></p>
-        <div id="episodesList" class="episodes-list"></div>
+
+    <div class="cover" id="cover"></div>
+    <img class="series-img" id="seriesImg" src="" alt="صورة المسلسل">
+
+    <div class="series-info">
+        <div class="series-title" id="seriesTitle">اسم المسلسل</div>
+        <div class="series-views" id="seriesViews">عدد المشاهدات: 0</div>
+        <div class="series-description" id="seriesAbout">وصف المسلسل</div>
     </div>
 
-    <script type="module">
-        // استيراد Firebase
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
-        import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
+    <div class="episodes-list" id="episodesList"></div>
 
-        // إعداد Firebase
-        const firebaseConfig = {
-            apiKey: "YOUR_API_KEY",
-            authDomain: "YOUR_AUTH_DOMAIN",
-            databaseURL: "YOUR_DATABASE_URL",
-            projectId: "YOUR_PROJECT_ID",
-            storageBucket: "YOUR_STORAGE_BUCKET",
-            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-            appId: "YOUR_APP_ID"
-        };
-        const app = initializeApp(firebaseConfig);
-        const db = getDatabase(app);
-
-        // الحصول على ID الفيلم من الـ URL
+    <script>
+        // استخراج ID من رابط الصفحة
         const urlParams = new URLSearchParams(window.location.search);
-        const movieId = urlParams.get("id");
+        const seriesID = urlParams.get('id');
 
-        if (!movieId) {
-            alert("لم يتم تحديد الفيلم!");
-        } else {
-            // جلب بيانات الفيلم والحلقات من Firebase
-            const movieRef = ref(db, `film/${movieId}`);
-            get(movieRef).then(snapshot => {
-                if (!snapshot.exists()) {
-                    alert("الفيلم غير موجود في قاعدة البيانات!");
-                    return;
+        // رابط قاعدة البيانات
+        const firebaseURL = "https://ak-sport-a985e-default-rtdb.firebaseio.com/" + seriesID + ".json";
+
+        // جلب بيانات المسلسل من Firebase
+        fetch(firebaseURL)
+            .then(response => response.json())
+            .then(data => {
+                if (data) {
+                    // تحديث بيانات المسلسل
+                    document.getElementById('cover').style.backgroundImage = `url(${data.cover})`;
+                    document.getElementById('seriesImg').src = data.img;
+                    document.getElementById('seriesTitle').textContent = data.name;
+                    document.getElementById('seriesViews').textContent = `عدد المشاهدات: ${data.view}`;
+                    document.getElementById('seriesAbout').textContent = data.about;
+
+                    // جلب الحلقات
+                    const episodesContainer = document.getElementById('episodesList');
+                    const episodes = JSON.parse(data.data);
+
+                    episodes.forEach(episode => {
+                        let episodeDiv = document.createElement('div');
+                        episodeDiv.className = 'episode-item';
+                        episodeDiv.innerHTML = `
+                            <img class="episode-img" src="${episode.img}" alt="صورة الحلقة">
+                            <div class="episode-title">${episode.name}</div>
+                        `;
+                        episodeDiv.onclick = () => {
+                            window.location.href = `player.html?URL=${encodeURIComponent(episode.URL)}&name=${encodeURIComponent(episode.name)}&IMG=${encodeURIComponent(episode.img)}`;
+                        };
+                        episodesContainer.appendChild(episodeDiv);
+                    });
                 }
-
-                const movieData = snapshot.val();
-                document.getElementById("movieName").innerText = movieData.name || "اسم غير متوفر";
-
-                if (!movieData.data) {
-                    document.getElementById("episodesList").innerHTML = "<p style='color: #bbb;'>لا توجد حلقات متاحة.</p>";
-                    return;
-                }
-
-                const episodesArray = Object.values(movieData.data); // تحويل الكائن إلى مصفوفة
-                const episodesList = document.getElementById("episodesList");
-                episodesList.innerHTML = "";
-
-                episodesArray.forEach(episode => {
-                    if (!episode || !episode.img || !episode.name || !episode.url) return;
-
-                    const episodeDiv = document.createElement("div");
-                    episodeDiv.className = "episode-item";
-                    episodeDiv.innerHTML = `
-                        <img src="${episode.img}" alt="صورة الحلقة">
-                        <div class="episode-name">${episode.name}</div>
-                    `;
-
-                    episodeDiv.onclick = () => {
-                        window.location.href = `player.html?url=${encodeURIComponent(episode.url)}`;
-                    };
-
-                    episodesList.appendChild(episodeDiv);
-                });
-
-            }).catch(error => {
-                console.error("خطأ في جلب البيانات:", error);
-                alert("حدث خطأ أثناء تحميل البيانات!");
-            });
-        }
+            })
+            .catch(error => console.error("فشل في تحميل البيانات", error));
     </script>
+
 </body>
 </html>
