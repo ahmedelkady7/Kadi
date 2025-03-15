@@ -3,109 +3,112 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مشغل الفيديو</title>
+    <title>مشاهدة البث المباشر</title>
+
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: Arial, sans-serif;
+            font-family: 'Cairo', sans-serif;
         }
 
         body {
-            background-color: #181c25;
+            background: #181C25;
             color: white;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
+            justify-content: flex-start;
             height: 100vh;
         }
 
+        /* مشغل الفيديو */
         .video-container {
             width: 100%;
-            max-width: 900px;
+            height: 40vh; /* حجم مناسب بالنسبة للشاشة */
+            background: black;
             position: relative;
         }
 
         video {
             width: 100%;
-            height: auto;
-            border-radius: 10px;
-            background-color: black;
+            height: 100%;
+            object-fit: cover;
         }
 
-        .video-info {
+        /* شريط المعلومات */
+        .info-bar {
             width: 100%;
-            max-width: 900px;
-            padding: 10px;
-            background-color: #22252e;
-            border-radius: 10px;
-            margin-top: 10px;
-            text-align: center;
-        }
-
-        .video-title {
-            font-size: 18px;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-
-        .ad-container {
-            width: 100%;
-            max-width: 900px;
-            margin-top: 15px;
-            text-align: center;
-        }
-
-        .ad-placeholder {
-            width: 100%;
-            height: 120px;
-            background-color: #333842;
             display: flex;
             align-items: center;
-            justify-content: center;
-            border-radius: 10px;
-            font-size: 16px;
-            color: #bbb;
+            padding: 10px;
+            background: linear-gradient(to bottom, #1E252F, #194643);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
         }
+
+        .channel-logo {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin-right: 15px;
+            overflow: hidden;
+            display: none; /* يتم عرضه فقط إذا تم تمرير صورة */
+        }
+
+        .channel-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .channel-title {
+            font-size: 18px;
+            font-weight: bold;
+            flex-grow: 1;
+        }
+
     </style>
 </head>
 <body>
 
     <div class="video-container">
-        <video id="videoPlayer" controls>
-            <source id="videoSource" src="" type="video/mp4">
+        <video id="videoPlayer" controls autoplay>
+            <source src="" type="application/x-mpegURL">
             متصفحك لا يدعم تشغيل الفيديو.
         </video>
     </div>
 
-    <div class="video-info">
-        <div class="video-title" id="videoTitle">جاري التحميل...</div>
-    </div>
-
-    <div class="ad-container">
-        <div class="ad-placeholder">إعلان يظهر هنا</div>
+    <div class="info-bar">
+        <div class="channel-logo" id="channelLogo">
+            <img id="channelImage" src="" alt="قناة">
+        </div>
+        <div class="channel-title" id="channelName">العنوان</div>
     </div>
 
     <script>
-        // استخراج القيم من الرابط
-        function getQueryParam(param) {
-            const urlParams = new URLSearchParams(window.location.search);
-            return urlParams.get(param);
-        }
+        // استخراج البيانات من الـ URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const videoURL = urlParams.get('URL');
+        const channelName = urlParams.get('name');
+        const channelImage = urlParams.get('IMG');
 
-        // تعيين اسم الفيديو والرابط
-        const videoURL = getQueryParam("url");
-        const videoName = getQueryParam("name");
-
+        // تعيين الرابط إلى مشغل الفيديو
         if (videoURL) {
-            document.getElementById("videoSource").src = videoURL;
-            document.getElementById("videoPlayer").load();
+            document.getElementById('videoPlayer').src = videoURL;
         }
 
-        if (videoName) {
-            document.getElementById("videoTitle").textContent = videoName;
+        // تعيين اسم القناة
+        if (channelName) {
+            document.getElementById('channelName').textContent = channelName;
+        }
+
+        // تعيين صورة القناة إذا كانت متاحة
+        if (channelImage) {
+            document.getElementById('channelImage').src = channelImage;
+            document.getElementById('channelLogo').style.display = 'block';
         }
     </script>
 
