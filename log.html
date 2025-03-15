@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تسجيل الدخول / إنشاء حساب</title>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f4f4f4;
+        }
+        .container {
+            width: 300px;
+            margin: 50px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+        input, button {
+            width: 100%;
+            margin: 10px 0;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            cursor: pointer;
+        }
+        .profile-container {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+        .profile-pic {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+        .selected {
+            border: 2px solid #007bff;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>تسجيل الدخول / إنشاء حساب</h2>
+        
+        <input type="email" id="email" placeholder="البريد الإلكتروني">
+        <input type="password" id="password" placeholder="كلمة المرور">
+        <input type="text" id="name" placeholder="الاسم الكامل">
+        
+        <h4>اختر صورة البروفايل</h4>
+        <div class="profile-container">
+            <img src="https://i.imgur.com/5QF8ZgL.png" class="profile-pic" onclick="selectImage(this)">
+            <img src="https://i.imgur.com/Ti5Gzef.png" class="profile-pic" onclick="selectImage(this)">
+            <img src="https://i.imgur.com/KFzXnLf.png" class="profile-pic" onclick="selectImage(this)">
+        </div>
+
+        <button onclick="signUp()">إنشاء حساب</button>
+        <button onclick="login()">تسجيل الدخول</button>
+        
+        <p id="message"></p>
+    </div>
+
+    <script>
+        // إعداد Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyAI21TvGX8jjTbEIDww5GEKcxM9zL6Gkn8",
+            authDomain: "ak-sport-a985e.firebaseapp.com",
+            databaseURL: "https://ak-sport-a985e-default-rtdb.firebaseio.com/",
+            projectId: "ak-sport-a985e",
+            appId: "1:922662521404:android:be257019ae9c69f6ddd139"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const database = firebase.database();
+
+        let selectedImage = "https://i.imgur.com/5QF8ZgL.png"; // الصورة الافتراضية
+
+        function selectImage(img) {
+            document.querySelectorAll(".profile-pic").forEach(i => i.classList.remove("selected"));
+            img.classList.add("selected");
+            selectedImage = img.src;
+        }
+
+        function signUp() {
+            let email = document.getElementById("email").value;
+            let password = document.getElementById("password").value;
+            let name = document.getElementById("name").value;
+
+            if (email === "" || password === "" || name === "") {
+                document.getElementById("message").innerText = "يرجى ملء جميع الحقول!";
+                return;
+            }
+
+            auth.createUserWithEmailAndPassword(email, password).then(userCredential => {
+                let user = userCredential.user;
+                let userId = user.uid;
+
+                // تخزين بيانات المستخدم في Firebase
+                database.ref("account/" + userId).set({
+                    name: name,
+                    email: email,
+                    id: userId,
+                    img: selectedImage,
+                    time: new Date().toLocaleString()
+                });
+
+                document.getElementById("message").innerText = "تم إنشاء الحساب بنجاح!";
+            }).catch(error => {
+                document.getElementById("message").innerText = error.message;
+            });
+        }
+
+        function login() {
+            let email = document.getElementById("email").value;
+            let password = document.getElementById("password").value;
+
+            if (email === "" || password === "") {
+                document.getElementById("message").innerText = "يرجى ملء جميع الحقول!";
+                return;
+            }
+
+            auth.signInWithEmailAndPassword(email, password).then(userCredential => {
+                document.getElementById("message").innerText = "تم تسجيل الدخول بنجاح!";
+            }).catch(error => {
+                document.getElementById("message").innerText = error.message;
+            });
+        }
+    </script>
+
+</body>
+</html>
