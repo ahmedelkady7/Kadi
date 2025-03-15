@@ -34,7 +34,7 @@
         }
 
         /* صورة الفيلم */
-        .film-img {
+        .series-img {
             width: 120px;
             height: 170px;
             border-radius: 10px;
@@ -46,26 +46,59 @@
         }
 
         /* معلومات الفيلم */
-        .film-info {
+        .series-info {
             text-align: center;
             padding: 50px 20px 20px;
         }
 
-        .film-title {
+        .series-title {
             font-size: 22px;
             font-weight: bold;
         }
 
-        .film-views {
+        .series-views {
             margin-top: 5px;
             font-size: 14px;
             opacity: 0.8;
         }
 
-        .film-description {
+        .series-description {
             margin-top: 10px;
             font-size: 16px;
             opacity: 0.9;
+        }
+
+        /* قائمة الحلقات */
+        .episodes-list {
+            width: 90%;
+            margin-top: 20px;
+        }
+
+        .episode-item {
+            display: flex;
+            align-items: center;
+            background: #222831;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .episode-item:hover {
+            background: #303841;
+        }
+
+        .episode-img {
+            width: 80px;
+            height: 50px;
+            border-radius: 5px;
+            margin-right: 10px;
+        }
+
+        .episode-title {
+            font-size: 16px;
+            flex-grow: 1;
         }
 
     </style>
@@ -73,36 +106,63 @@
 <body>
 
     <div class="cover" id="cover"></div>
-    <img class="film-img" id="filmImg" src="" alt="صورة الفيلم">
+    <img class="series-img" id="seriesImg" src="" alt="صورة الفيلم">
 
-    <div class="film-info">
-        <div class="film-title" id="filmTitle">اسم الفيلم</div>
-        <div class="film-views" id="filmViews">عدد المشاهدات: 0</div>
-        <div class="film-description" id="filmAbout">وصف الفيلم</div>
+    <div class="series-info">
+        <div class="series-title" id="seriesTitle">اسم الفيلم</div>
+        <div class="series-views" id="seriesViews">عدد المشاهدات: 0</div>
+        <div class="series-description" id="seriesAbout">وصف الفيلم</div>
     </div>
+
+    <div class="episodes-list" id="episodesList"></div>
 
     <script>
         // استخراج ID من رابط الصفحة
         const urlParams = new URLSearchParams(window.location.search);
-        const filmID = urlParams.get('id');
+        const seriesID = urlParams.get('id');
 
-        // رابط قاعدة البيانات
-        const firebaseURL = `https://ak-sport-a985e-default-rtdb.firebaseio.com/FILM/${filmID}.json`;
+        // رابط قاعدة البيانات الصحيح داخل "film/"
+        const firebaseURL = `https://ak-sport-a985e-default-rtdb.firebaseio.com/film/${seriesID}.json`;
 
         // جلب بيانات الفيلم من Firebase
         fetch(firebaseURL)
             .then(response => response.json())
             .then(data => {
                 if (data) {
-                    // تحديث بيانات الفيلم
+                    // تحديث بيانات الفيلم في الصفحة
                     document.getElementById('cover').style.backgroundImage = `url(${data.cover})`;
-                    document.getElementById('filmImg').src = data.IMG;
-                    document.getElementById('filmTitle').textContent = data.name;
-                    document.getElementById('filmViews').textContent = `عدد المشاهدات: ${data.view}`;
-                    document.getElementById('filmAbout').textContent = data.about;
+                    document.getElementById('seriesImg').src = data.img;
+                    document.getElementById('seriesTitle').textContent = data.name;
+                    document.getElementById('seriesViews').textContent = `عدد المشاهدات: ${data.view}`;
+                    document.getElementById('seriesAbout').textContent = data.about;
+
+                    // جلب قائمة الحلقات
+                    const episodesContainer = document.getElementById('episodesList');
+                    
+                    // التحقق من وجود الحلقات وعدم حدوث خطأ في قراءة JSON
+                    try {
+                        const episodes = JSON.parse(data.data);
+
+                        episodes.forEach(episode => {
+                            let episodeDiv = document.createElement('div');
+                            episodeDiv.className = 'episode-item';
+                            episodeDiv.innerHTML = `
+                                <img class="episode-img" src="${episode.img}" alt="صورة الحلقة">
+                                <div class="episode-title">${episode.name}</div>
+                            `;
+                            episodeDiv.onclick = () => {
+                                window.location.href = `player.html?URL=${encodeURIComponent(episode.URL)}&name=${encodeURIComponent(episode.name)}&IMG=${encodeURIComponent(episode.img)}`;
+                            };
+                            episodesContainer.appendChild(episodeDiv);
+                        });
+                    } catch (e) {
+                        console.error("⚠️ خطأ في قراءة بيانات الحلقات:", e);
+                    }
+                } else {
+                    console.error("⚠️ لا توجد بيانات لهذا الـ ID في Firebase.");
                 }
             })
-            .catch(error => console.error("فشل في تحميل البيانات", error));
+            .catch(error => console.error("❌ فشل في تحميل البيانات", error));
     </script>
 
 </body>
