@@ -3,145 +3,83 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مشغل الفيديو</title>
+    <title>مشغل الفيديو - قاضي</title>
     <style>
+        /* خلفية الصفحة */
         body {
-            background-color: #121212;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to right, #10131a, #181c25);
             color: white;
             font-family: Arial, sans-serif;
             text-align: center;
-            margin: 0;
-            padding: 0;
         }
+
+        /* حاوية الفيديو */
         .video-container {
-            position: relative;
             width: 100%;
             max-width: 100%;
+            margin: 0 auto;
+            position: relative;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 10px;
+        }
+
+        /* مشغل الفيديو */
+        .video-player {
+            width: 100%;
+            height: 50vh; /* 50% من الشاشة */
             background: black;
         }
-        video {
-            width: 100%;
-            height: auto;
+
+        /* معلومات الفيديو */
+        .video-info {
+            margin-top: 10px;
+            font-size: 20px;
+            font-weight: bold;
         }
-        .controls {
-            display: flex;
-            justify-content: space-around;
-            padding: 10px;
-            background: #1e1e1e;
-            border-radius: 5px;
-            margin: 10px auto;
+
+        /* قسم الإعلانات */
+        .ads-section {
+            margin-top: 20px;
+        }
+
+        .ads-section img {
+            width: 90%;
             max-width: 600px;
-        }
-        button {
-            background: #007bff;
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            cursor: pointer;
-            border-radius: 5px;
-        }
-        button:hover {
-            background: #0056b3;
-        }
-        .info-bar {
-            margin: 10px 0;
-            padding: 10px;
-            background: #1e1e1e;
-            border-radius: 5px;
-        }
-        .comments, .ad-section {
-            background: #1e1e1e;
-            padding: 10px;
-            margin: 10px;
-            border-radius: 5px;
-        }
-        .comments h3, .ad-section h3 {
-            color: #f1c40f;
-        }
-        .ad-section img {
-            width: 100%;
-            border-radius: 5px;
+            border-radius: 10px;
+            opacity: 0.8;
         }
     </style>
 </head>
 <body>
 
-    <!-- مشغل الفيديو -->
     <div class="video-container">
-        <video id="videoPlayer" controls>
-            <source src="video.mp4" type="video/mp4">
+        <video id="videoPlayer" class="video-player" controls>
+            <source id="videoSource" src="" type="video/mp4">
             متصفحك لا يدعم تشغيل الفيديو.
         </video>
+        <div class="video-info">
+            <h2 id="videoTitle">عنوان الفيديو</h2>
+        </div>
     </div>
 
-    <!-- شريط المعلومات -->
-    <div class="info-bar">
-        <h2 id="videoTitle">عنوان الفيديو</h2>
-    </div>
-
-    <!-- أدوات التحكم -->
-    <div class="controls">
-        <button onclick="rewind()">⏪ 10 ثواني</button>
-        <button onclick="togglePlay()">▶ / ⏸</button>
-        <button onclick="fastForward()">⏩ 10 ثواني</button>
-        <button onclick="toggleFullScreen()">⛶ ملء الشاشة</button>
-        <button onclick="changeSpeed()">⚡ السرعة</button>
-    </div>
-
-    <!-- التعليقات -->
-    <div class="comments">
-        <h3>التعليقات</h3>
-        <p>🚀 تحديث قادم لدعم التعليقات!</p>
-    </div>
-
-    <!-- الإعلان -->
-    <div class="ad-section">
-        <h3>إعلان</h3>
+    <div class="ads-section">
         <img src="ad-placeholder.jpg" alt="إعلان">
     </div>
 
     <script>
-        let video = document.getElementById("videoPlayer");
+        // جلب القيم الممررة في الرابط
+        const urlParams = new URLSearchParams(window.location.search);
+        const videoURL = urlParams.get('url');
+        const videoTitle = urlParams.get('title');
 
-        function togglePlay() {
-            if (video.paused) {
-                video.play();
-            } else {
-                video.pause();
-            }
-        }
+        // تعيين القيم في المشغل
+        document.getElementById('videoSource').src = videoURL || 'default.mp4';
+        document.getElementById('videoTitle').innerText = videoTitle || 'فيديو افتراضي';
 
-        function rewind() {
-            video.currentTime -= 10;
-        }
-
-        function fastForward() {
-            video.currentTime += 10;
-        }
-
-        function toggleFullScreen() {
-            if (!document.fullscreenElement) {
-                video.requestFullscreen();
-            } else {
-                document.exitFullscreen();
-            }
-        }
-
-        function changeSpeed() {
-            let speeds = [0.5, 1, 1.5, 2];
-            let currentSpeed = speeds.indexOf(video.playbackRate);
-            let nextSpeed = (currentSpeed + 1) % speeds.length;
-            video.playbackRate = speeds[nextSpeed];
-            alert("سرعة التشغيل: " + speeds[nextSpeed] + "x");
-        }
-
-        // جلب الفيديو والاسم من رابط الصفحة
-        let params = new URLSearchParams(window.location.search);
-        let videoUrl = params.get("url");
-        let videoName = params.get("name");
-
-        if (videoUrl) video.src = videoUrl;
-        if (videoName) document.getElementById("videoTitle").innerText = videoName;
+        // إعادة تحميل المشغل بعد تعيين المصدر
+        document.getElementById('videoPlayer').load();
     </script>
 
 </body>
