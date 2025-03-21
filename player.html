@@ -92,7 +92,7 @@
         // استخراج البيانات من الـ URL
         const videoID = localStorage.getItem("videoID");
         if (videoID) {
-            fetch(`https://us-central1-YOUR_PROJECT_ID.cloudfunctions.net/getStreamUrl?id=${videoID}`)
+            fetch(`https://us-central1-ak-sport-a985e.cloudfunctions.net/getStreamUrl?id=${videoID}`)
                 .then(response => response.json())
                 .then(data => {
                     if (data.secureUrl) {
