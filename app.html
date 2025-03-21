@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>البث المباشر</title>
+    <style>
+        body {
+            background-color: #181C25;
+            color: white;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+        .header {
+            background: linear-gradient(to right, #1D2225, #1F262F);
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .header img {
+            width: 44px;
+            height: 44px;
+            padding: 4px;
+        }
+        .header h1 {
+            font-size: 18px;
+        }
+        .search-bar {
+            margin: 10px;
+            padding: 8px;
+            width: 90%;
+            border-radius: 5px;
+            border: none;
+            outline: none;
+        }
+        .video-container {
+            margin: 20px auto;
+            max-width: 600px;
+            background: black;
+            padding: 10px;
+        }
+        .video-container video {
+            width: 100%;
+        }
+        .channel-list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .channel {
+            width: 150px;
+            margin: 10px;
+            padding: 10px;
+            background: #1D2225;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+        .channel img {
+            width: 100%;
+            border-radius: 5px;
+        }
+        .channel p {
+            margin: 5px 0;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <img src="logo.png" alt="Logo">
+        <h1>البث المباشر</h1>
+        <img src="search_icon.png" alt="بحث" id="searchBtn">
+    </div>
+
+    <input type="text" class="search-bar" id="searchInput" placeholder="ابحث عن قناة">
+
+    <div class="video-container">
+        <video id="videoPlayer" controls>
+            <source src="video.mp4" type="video/mp4">
+        </video>
+        <p id="channelName">اسم القناة</p>
+    </div>
+
+    <div class="channel-list" id="channelList">
+        <div class="channel" onclick="playVideo('video1.mp4', 'القناة 1')">
+            <img src="channel1.png" alt="القناة 1">
+            <p>القناة 1</p>
+        </div>
+        <div class="channel" onclick="playVideo('video2.mp4', 'القناة 2')">
+            <img src="channel2.png" alt="القناة 2">
+            <p>القناة 2</p>
+        </div>
+    </div>
+
+    <script>
+        function playVideo(url, name) {
+            document.getElementById("videoPlayer").src = url;
+            document.getElementById("channelName").innerText = name;
+        }
+
+        document.getElementById("searchInput").addEventListener("keyup", function() {
+            let filter = this.value.toLowerCase();
+            let channels = document.getElementsByClassName("channel");
+            for (let i = 0; i < channels.length; i++) {
+                let name = channels[i].getElementsByTagName("p")[0].innerText.toLowerCase();
+                if (name.includes(filter)) {
+                    channels[i].style.display = "block";
+                } else {
+                    channels[i].style.display = "none";
+                }
+            }
+        });
+    </script>
+
+</body>
+</html>
