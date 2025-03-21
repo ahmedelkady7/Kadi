@@ -25,6 +25,7 @@
             justify-content: flex-start;
             height: 100vh;
             padding: 20px;
+            position: relative;
         }
 
         /* شاشة تحميل اللوجو */
@@ -125,6 +126,44 @@
             background: #2C3748;
             transform: scale(1.05);
         }
+
+        /* شريط تسجيل الدخول */
+        .login-bar {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background: linear-gradient(to right, #1D2225, #202731);
+            color: white;
+            text-align: center;
+            padding: 15px;
+            font-size: 16px;
+            font-weight: bold;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2);
+            animation: slideUp 0.5s ease-in-out;
+        }
+
+        .login-bar a {
+            color: #FFD700;
+            text-decoration: none;
+            margin-left: 10px;
+            font-weight: bold;
+        }
+
+        .login-bar a:hover {
+            text-decoration: underline;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(100%);
+            }
+            to {
+                transform: translateY(0);
+            }
+        }
     </style>
 </head>
 <body>
@@ -162,6 +201,12 @@
         </a>
     </div>
 
+    <!-- شريط تسجيل الدخول -->
+    <div class="login-bar" id="loginBar">
+        <span>لديك حساب؟</span>
+        <a href="sign.html">سجل الدخول الآن</a>
+    </div>
+
     <script>
         function goToSearch() {
             window.location.href = "search.html";
@@ -176,6 +221,12 @@
             setTimeout(function() {
                 document.querySelector('.splash-screen').style.display = 'none';
             }, 3000);
+
+            // التحقق من حالة تسجيل الدخول (محاكاة)
+            let isLoggedIn = false; // اجعلها true إذا كان المستخدم مسجلاً الدخول
+            if (isLoggedIn) {
+                document.getElementById("loginBar").style.display = "none";
+            }
         };
     </script>
 
