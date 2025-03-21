@@ -3,63 +3,160 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تسجيل الدخول</title>
+    <title>تسجيل الدخول / إنشاء حساب</title>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+    
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Cairo', sans-serif;
+        }
         body {
-            background: linear-gradient(135deg, #181c25, #1e293b);
+            background: #181C25;
             color: white;
-            font-family: Arial, sans-serif;
+            text-align: center;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
             height: 100vh;
-            margin: 0;
-        }
-        .form-container {
-            background: rgba(255, 255, 255, 0.1);
             padding: 20px;
-            border-radius: 15px;
-            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
-            backdrop-filter: blur(10px);
-            width: 90%;
-            max-width: 350px;
-            text-align: center;
         }
-        h2 { margin-bottom: 15px; }
+        .container {
+            background: #202731;
+            padding: 20px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 400px;
+        }
+        h1 {
+            margin-bottom: 15px;
+            font-size: 22px;
+        }
         input {
             width: 100%;
             padding: 10px;
-            margin: 8px 0;
+            margin: 10px 0;
+            border-radius: 5px;
             border: none;
-            border-radius: 10px;
-            background: rgba(255, 255, 255, 0.2);
+            background: #2C3748;
             color: white;
-            font-size: 16px;
-            text-align: center;
-            outline: none;
         }
-        input::placeholder { color: #ddd; }
         button {
             width: 100%;
             padding: 10px;
-            background: cyan;
             border: none;
-            border-radius: 10px;
-            cursor: pointer;
+            background: #194643;
+            color: white;
             font-size: 18px;
-            color: #181c25;
-            font-weight: bold;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: 0.3s;
         }
-        button:hover { background: #00e5e5; }
+        button:hover {
+            background: #2E5D57;
+        }
+        .toggle-btn {
+            background: none;
+            border: none;
+            color: #FFD700;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .avatar-options img {
+            width: 60px;
+            border-radius: 50%;
+            cursor: pointer;
+            margin: 5px;
+            border: 2px solid transparent;
+        }
+        .avatar-options img.selected {
+            border: 2px solid #FFD700;
+        }
     </style>
 </head>
 <body>
-    <div class="form-container">
-        <h2>تسجيل الدخول</h2>
-        <input type="text" placeholder="الاسم">
-        <input type="email" placeholder="البريد الإلكتروني">
-        <input type="password" placeholder="كلمة المرور">
-        <button>تسجيل الدخول</button>
+
+    <div class="container">
+        <h1 id="formTitle">تسجيل الدخول</h1>
+        <input type="email" id="email" placeholder="البريد الإلكتروني">
+        <input type="password" id="password" placeholder="كلمة المرور">
+        <div id="nameField" style="display: none;">
+            <input type="text" id="name" placeholder="الاسم الكامل">
+            <p>اختر صورة الحساب:</p>
+            <div class="avatar-options">
+                <img src="https://example.com/male.png" alt="ذكر" onclick="selectAvatar(this)">
+                <img src="https://example.com/female.png" alt="أنثى" onclick="selectAvatar(this)">
+                <img src="https://example.com/boy.png" alt="طفل" onclick="selectAvatar(this)">
+            </div>
+        </div>
+        <button id="authBtn" onclick="handleAuth()">تسجيل الدخول</button>
+        <button class="toggle-btn" onclick="toggleForm()">ليس لديك حساب؟ إنشاء حساب</button>
     </div>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyAI21TvGX8jjTbEIDww5GEKcxM9zL6Gkn8",
+            authDomain: "ak-sport-a985e.firebaseapp.com",
+            databaseURL: "https://ak-sport-a985e-default-rtdb.firebaseio.com/",
+            projectId: "ak-sport-a985e",
+            appId: "1:922662521404:android:be257019ae9c69f6ddd139"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.database().ref("account");
+
+        let isSignUp = false;
+        let selectedAvatar = "https://example.com/default-avatar.png";
+
+        function toggleForm() {
+            isSignUp = !isSignUp;
+            document.getElementById("formTitle").textContent = isSignUp ? "إنشاء حساب" : "تسجيل الدخول";
+            document.getElementById("authBtn").textContent = isSignUp ? "إنشاء حساب" : "تسجيل الدخول";
+            document.getElementById("nameField").style.display = isSignUp ? "block" : "none";
+        }
+
+        function selectAvatar(img) {
+            document.querySelectorAll(".avatar-options img").forEach(img => img.classList.remove("selected"));
+            img.classList.add("selected");
+            selectedAvatar = img.src;
+        }
+
+        function handleAuth() {
+            const email = document.getElementById("email").value;
+            const password = document.getElementById("password").value;
+
+            if (isSignUp) {
+                const name = document.getElementById("name").value;
+                auth.createUserWithEmailAndPassword(email, password)
+                    .then(userCredential => {
+                        const user = userCredential.user;
+                        db.child(user.uid).set({
+                            name: name,
+                            email: email,
+                            id: user.uid,
+                            img: selectedAvatar,
+                            bio: "",
+                            time: new Date().toLocaleString()
+                        });
+                        window.location.href = "index.html";
+                    })
+                    .catch(error => alert(error.message));
+            } else {
+                auth.signInWithEmailAndPassword(email, password)
+                    .then(() => window.location.href = "index.html")
+                    .catch(error => alert(error.message));
+            }
+        }
+    </script>
+
 </body>
 </html>
