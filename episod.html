@@ -1,6 +1,21 @@
 <!DOCTYPE html>
 <html lang="ar">
 <head>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+
+<script>
+    const encryptionKey = "MySuperSecretKey123!";
+
+    function encryptData(text) {
+        return CryptoJS.AES.encrypt(text, encryptionKey).toString();
+    }
+
+    function decryptData(encryptedText) {
+        const bytes = CryptoJS.AES.decrypt(encryptedText, encryptionKey);
+        return bytes.toString(CryptoJS.enc.Utf8);
+    }
+</script>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>مشاهدة الفيلم</title>
@@ -138,7 +153,7 @@
                             `;
                             episodeDiv.onclick = () => {
                                 
-    localStorage.setItem("videoID", episode.videoID);
+    localStorage.setItem("videoID", encryptData(episode.videoID));
     localStorage.setItem("videoName", episode.name);
     localStorage.setItem("videoImg", episode.img);
     window.location.href = "player.html";

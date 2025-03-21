@@ -1,6 +1,21 @@
 <!DOCTYPE html>
 <html lang="ar">
 <head>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+
+<script>
+    const encryptionKey = "MySuperSecretKey123!";
+
+    function encryptData(text) {
+        return CryptoJS.AES.encrypt(text, encryptionKey).toString();
+    }
+
+    function decryptData(encryptedText) {
+        const bytes = CryptoJS.AES.decrypt(encryptedText, encryptionKey);
+        return bytes.toString(CryptoJS.enc.Utf8);
+    }
+</script>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>مشاهدة البث المباشر</title>
@@ -90,9 +105,10 @@
 
     <script>
         // استخراج البيانات من الـ URL
-        const videoID = localStorage.getItem("videoID");
+        const encryptedID = localStorage.getItem("videoID");
+       const videoID = decryptData(encryptedID);
         if (videoID) {
-            fetch(`https://us-central1-ak-sport-a985e.cloudfunctions.net/getStreamUrl?id=${videoID}`)
+            fetch(`https://us-central1-YOUR_PROJECT_ID.cloudfunctions.net/getStreamUrl?id=${videoID}`)
                 .then(response => response.json())
                 .then(data => {
                     if (data.secureUrl) {
