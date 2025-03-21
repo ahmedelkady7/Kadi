@@ -24,7 +24,6 @@
             padding-bottom: 20px;
         }
 
-        /* خلفية الغلاف */
         .cover {
             width: 100%;
             height: 40vh;
@@ -33,7 +32,6 @@
             position: relative;
         }
 
-        /* معلومات الفيلم */
         .series-info {
             text-align: center;
             padding: 20px;
@@ -56,7 +54,6 @@
             opacity: 0.9;
         }
 
-        /* قائمة الحلقات */
         .episodes-list {
             width: 90%;
             margin-top: 20px;
@@ -104,32 +101,24 @@
     <div class="episodes-list" id="episodesList"></div>
 
     <script>
-        // استخراج ID من رابط الصفحة
         const urlParams = new URLSearchParams(window.location.search);
         const seriesID = urlParams.get('id');
 
-        // رابط قاعدة البيانات الصحيح داخل "film/"
         const firebaseURL = `https://ak-sport-a985e-default-rtdb.firebaseio.com/film/${seriesID}.json`;
 
-        // جلب بيانات الفيلم من Firebase
         fetch(firebaseURL)
             .then(response => response.json())
             .then(data => {
                 if (data) {
-                    // تحديث بيانات الفيلم في الصفحة
                     document.getElementById('cover').style.backgroundImage = `url(${data.cover})`;
                     document.getElementById('seriesTitle').textContent = data.name;
                     document.getElementById('seriesViews').textContent = `عدد المشاهدات: ${data.view}`;
                     document.getElementById('seriesAbout').textContent = data.about;
 
-                    // جلب قائمة الحلقات
                     const episodesContainer = document.getElementById('episodesList');
-                    
-                    // التحقق من وجود الحلقات وعدم حدوث خطأ في قراءة JSON
-                    try {
-                        const episodes = JSON.parse(data.data);
 
-                        episodes.forEach(episode => {
+                    if (data.data && Array.isArray(data.data)) {
+                        data.data.forEach(episode => {
                             let episodeDiv = document.createElement('div');
                             episodeDiv.className = 'episode-item';
                             episodeDiv.innerHTML = `
@@ -137,12 +126,18 @@
                                 <div class="episode-title">${episode.name}</div>
                             `;
                             episodeDiv.onclick = () => {
-                                window.location.href = `player.html?url=${encodeURIComponent(episode.url)}&name=${encodeURIComponent(episode.name)}&Img=${encodeURIComponent(episode.img)}`;
+                                // حفظ بيانات الحلقة في Local Storage
+                                localStorage.setItem("videoURL", episode.url);
+                                localStorage.setItem("videoName", episode.name);
+                                localStorage.setItem("videoImg", episode.img);
+                                
+                                // الانتقال إلى صفحة المشغل بدون تمرير الرابط في الـ URL
+                                window.location.href = "player.html";
                             };
                             episodesContainer.appendChild(episodeDiv);
                         });
-                    } catch (e) {
-                        console.error("⚠️ خطأ في قراءة بيانات الحلقات:", e);
+                    } else {
+                        console.error("⚠️ لا توجد بيانات للحلقات.");
                     }
                 } else {
                     console.error("⚠️ لا توجد بيانات لهذا الـ ID في Firebase.");
