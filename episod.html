@@ -1,147 +1,155 @@
-<!DOCTYPE html><html lang="ar">
+<!DOCTYPE html>
+<html lang="ar">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مشاهدة الفيلم</title><style>
-    @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');
+    <title>مشاهدة الفيلم</title>
 
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-        font-family: 'Cairo', sans-serif;
-    }
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');
 
-    body {
-        background: #181C25;
-        color: white;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        padding-bottom: 20px;
-    }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Cairo', sans-serif;
+        }
 
-    .cover {
-        width: 100%;
-        height: 40vh;
-        background-size: cover;
-        background-position: center;
-        position: relative;
-    }
+        body {
+            background: #181C25;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-bottom: 20px;
+        }
 
-    .series-info {
-        text-align: center;
-        padding: 20px;
-    }
+        /* خلفية الغلاف */
+        .cover {
+            width: 100%;
+            height: 40vh;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
 
-    .series-title {
-        font-size: 22px;
-        font-weight: bold;
-    }
+        /* معلومات الفيلم */
+        .series-info {
+            text-align: center;
+            padding: 20px;
+        }
 
-    .series-views {
-        margin-top: 5px;
-        font-size: 14px;
-        opacity: 0.8;
-    }
+        .series-title {
+            font-size: 22px;
+            font-weight: bold;
+        }
 
-    .series-description {
-        margin-top: 10px;
-        font-size: 16px;
-        opacity: 0.9;
-    }
+        .series-views {
+            margin-top: 5px;
+            font-size: 14px;
+            opacity: 0.8;
+        }
 
-    .episodes-list {
-        width: 90%;
-        margin-top: 20px;
-    }
+        .series-description {
+            margin-top: 10px;
+            font-size: 16px;
+            opacity: 0.9;
+        }
 
-    .episode-item {
-        display: flex;
-        align-items: center;
-        background: #222831;
-        padding: 10px;
-        border-radius: 8px;
-        margin-bottom: 10px;
-        cursor: pointer;
-        transition: 0.3s;
-    }
+        /* قائمة الحلقات */
+        .episodes-list {
+            width: 90%;
+            margin-top: 20px;
+        }
 
-    .episode-item:hover {
-        background: #303841;
-    }
+        .episode-item {
+            display: flex;
+            align-items: center;
+            background: #222831;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
 
-    .episode-img {
-        width: 140px;
-        height: 90px;
-        border-radius: 5px;
-        margin-right: 10px;
-    }
+        .episode-item:hover {
+            background: #303841;
+        }
 
-    .episode-title {
-        font-size: 19px;
-        flex-grow: 1;
-    }
+        .episode-img {
+            width: 140px;
+            height: 90px;
+            border-radius: 5px;
+            margin-right: 10px;
+        }
 
-</style>
+        .episode-title {
+            font-size: 19px;
+            flex-grow: 1;
+        }
 
+    </style>
 </head>
-<body><div class="cover" id="cover"></div>
+<body>
 
-<div class="series-info">
-    <div class="series-title" id="seriesTitle">اسم الفيلم</div>
-    <div class="series-views" id="seriesViews">عدد المشاهدات: 0</div>
-    <div class="series-description" id="seriesAbout">وصف الفيلم</div>
-</div>
+    <div class="cover" id="cover"></div>
 
-<div class="episodes-list" id="episodesList"></div>
+    <div class="series-info">
+        <div class="series-title" id="seriesTitle">اسم الفيلم</div>
+        <div class="series-views" id="seriesViews">عدد المشاهدات: 0</div>
+        <div class="series-description" id="seriesAbout">وصف الفيلم</div>
+    </div>
 
-<script>
-    const urlParams = new URLSearchParams(window.location.search);
-    const seriesID = urlParams.get('id');
+    <div class="episodes-list" id="episodesList"></div>
 
-    const firebaseURL = `https://ak-sport-a985e-default-rtdb.firebaseio.com/film/${seriesID}.json`;
+    <script>
+        // استخراج ID من رابط الصفحة
+        const urlParams = new URLSearchParams(window.location.search);
+        const seriesID = urlParams.get('id');
 
-    fetch(firebaseURL)
-        .then(response => response.json())
-        .then(data => {
-            if (data) {
-                document.getElementById('cover').style.backgroundImage = `url(${data.cover})`;
-                document.getElementById('seriesTitle').textContent = data.name;
-                document.getElementById('seriesViews').textContent = `عدد المشاهدات: ${data.view}`;
-                document.getElementById('seriesAbout').textContent = data.about;
+        // رابط قاعدة البيانات الصحيح داخل "film/"
+        const firebaseURL = `https://ak-sport-a985e-default-rtdb.firebaseio.com/film/${seriesID}.json`;
 
-                const episodesContainer = document.getElementById('episodesList');
+        // جلب بيانات الفيلم من Firebase
+        fetch(firebaseURL)
+            .then(response => response.json())
+            .then(data => {
+                if (data) {
+                    // تحديث بيانات الفيلم في الصفحة
+                    document.getElementById('cover').style.backgroundImage = `url(${data.cover})`;
+                    document.getElementById('seriesTitle').textContent = data.name;
+                    document.getElementById('seriesViews').textContent = `عدد المشاهدات: ${data.view}`;
+                    document.getElementById('seriesAbout').textContent = data.about;
 
-                if (data.data && Array.isArray(data.data)) {
-                    data.data.forEach(episode => {
-                        let episodeDiv = document.createElement('div');
-                        episodeDiv.className = 'episode-item';
-                        episodeDiv.innerHTML = `
-                            <img class="episode-img" src="${episode.img}" alt="صورة الحلقة">
-                            <div class="episode-title">${episode.name}</div>
-                        `;
-                        episodeDiv.onclick = () => {
-                            // حفظ بيانات الحلقة في Local Storage
-                            localStorage.setItem("videoURL", episode.url);
-                            localStorage.setItem("videoName", episode.name);
-                            localStorage.setItem("videoImg", episode.img);
-                            
-                            // الانتقال إلى صفحة المشغل بدون تمرير الرابط في الـ URL
-                            window.location.href = "player.html";
-                        };
-                        episodesContainer.appendChild(episodeDiv);
-                    });
+                    // جلب قائمة الحلقات
+                    const episodesContainer = document.getElementById('episodesList');
+                    
+                    // التحقق من وجود الحلقات وعدم حدوث خطأ في قراءة JSON
+                    try {
+                        const episodes = JSON.parse(data.data);
+
+                        episodes.forEach(episode => {
+                            let episodeDiv = document.createElement('div');
+                            episodeDiv.className = 'episode-item';
+                            episodeDiv.innerHTML = `
+                                <img class="episode-img" src="${episode.img}" alt="صورة الحلقة">
+                                <div class="episode-title">${episode.name}</div>
+                            `;
+                            episodeDiv.onclick = () => {
+                                window.location.href = `player.html?url=${encodeURIComponent(episode.url)}&name=${encodeURIComponent(episode.name)}&Img=${encodeURIComponent(episode.img)}`;
+                            };
+                            episodesContainer.appendChild(episodeDiv);
+                        });
+                    } catch (e) {
+                        console.error("⚠️ خطأ في قراءة بيانات الحلقات:", e);
+                    }
                 } else {
-                    console.error("⚠️ لا توجد بيانات للحلقات.");
+                    console.error("⚠️ لا توجد بيانات لهذا الـ ID في Firebase.");
                 }
-            } else {
-                console.error("⚠️ لا توجد بيانات لهذا الـ ID في Firebase.");
-            }
-        })
-        .catch(error => console.error("❌ فشل في تحميل البيانات", error));
-</script>
+            })
+            .catch(error => console.error("❌ فشل في تحميل البيانات", error));
+    </script>
 
 </body>
-</html>هذا كود صفحةقبل تخزين ال url قم التشفير اللازم
-
+</html>
