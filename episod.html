@@ -137,7 +137,12 @@
                                 <div class="episode-title">${episode.name}</div>
                             `;
                             episodeDiv.onclick = () => {
-                                window.location.href = `player.html?url=${encodeURIComponent(episode.url)}&name=${encodeURIComponent(episode.name)}&Img=${encodeURIComponent(episode.img)}`;
+                                
+    localStorage.setItem("videoID", episode.videoID);
+    localStorage.setItem("videoName", episode.name);
+    localStorage.setItem("videoImg", episode.img);
+    window.location.href = "player.html";
+    
                             };
                             episodesContainer.appendChild(episodeDiv);
                         });

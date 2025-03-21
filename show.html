@@ -167,7 +167,12 @@
             urlParams.append("url", show.url);
             urlParams.append("img", show.img);
 
-            window.location.href = `player.html?${urlParams.toString()}`;
+            
+    localStorage.setItem("videoID", show.videoID);
+    localStorage.setItem("videoName", show.name);
+    localStorage.setItem("videoImg", show.img);
+    window.location.href = "player.html";
+    
         }
     </script>
 

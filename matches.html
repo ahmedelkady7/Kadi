@@ -100,7 +100,11 @@
                     matchCard.className = 'match-card';
 
                     matchCard.onclick = () => {
-                        window.location.href = `player.html?url=${encodeURIComponent(data.channel_url)}&name=${encodeURIComponent(matchName)}`;
+                        
+    localStorage.setItem("videoID", data.videoID);
+    localStorage.setItem("videoName", matchName);
+    window.location.href = "player.html";
+    
                     };
 
                     matchCard.innerHTML = `

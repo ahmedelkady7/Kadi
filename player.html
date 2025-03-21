@@ -90,8 +90,19 @@
 
     <script>
         // استخراج البيانات من الـ URL
-        const urlParams = new URLSearchParams(window.location.search);
-        const videoURL = urlParams.get('url');
+        const videoID = localStorage.getItem("videoID");
+        if (videoID) {
+            fetch(`https://us-central1-YOUR_PROJECT_ID.cloudfunctions.net/getStreamUrl?id=${videoID}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.secureUrl) {
+                        document.getElementById("videoPlayer").src = data.secureUrl;
+                    } else {
+                        console.error("❌ الفيديو غير متاح.");
+                    }
+                })
+                .catch(error => console.error("❌ فشل في جلب الرابط", error));
+        }
         const channelName = urlParams.get('name');
         const channelImage = urlParams.get('img');
 
