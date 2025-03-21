@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>مشاهدة الفيلم</title>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');
 
@@ -101,6 +103,13 @@
     <div class="episodes-list" id="episodesList"></div>
 
     <script>
+        const encryptionKey = "MySuperSecretKey123!"; // استخدم مفتاحًا أكثر تعقيدًا في التطبيق الحقيقي
+
+        // دالة تشفير البيانات باستخدام AES-256
+        function encryptData(text) {
+            return CryptoJS.AES.encrypt(text, encryptionKey).toString();
+        }
+
         const urlParams = new URLSearchParams(window.location.search);
         const seriesID = urlParams.get('id');
 
@@ -126,8 +135,8 @@
                                 <div class="episode-title">${episode.name}</div>
                             `;
                             episodeDiv.onclick = () => {
-                                // حفظ بيانات الحلقة في Local Storage
-                                localStorage.setItem("videoURL", episode.url);
+                                // تشفير بيانات الحلقة وتخزينها في Local Storage
+                                localStorage.setItem("videoURL", encryptData(episode.url));
                                 localStorage.setItem("videoName", episode.name);
                                 localStorage.setItem("videoImg", episode.img);
                                 
