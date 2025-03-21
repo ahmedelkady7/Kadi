@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مرحبا بك</title>
+    <style>
+        body {
+            background: linear-gradient(135deg, #181c25, #1e293b);
+            color: white;
+            font-family: Arial, sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+            width: 90%;
+            max-width: 350px;
+        }
+        .option {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            margin: 15px 0;
+            padding: 15px;
+            background: rgba(0, 255, 255, 0.2);
+            border-radius: 15px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .option:hover {
+            background: rgba(0, 255, 255, 0.4);
+        }
+        .option img {
+            width: 60px;
+            height: 60px;
+            margin-bottom: 10px;
+        }
+        .option span {
+            font-size: 18px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>مرحبًا بك</h2>
+        <p>اختر خيارًا للمتابعة</p>
+        <div class="option" onclick="window.location.href='signup.html'">
+            <img src="https://cdn-icons-png.flaticon.com/512/9635/9635511.png" alt="تسجيل جديد">
+            <span>إنشاء حساب جديد</span>
+        </div>
+        <div class="option" onclick="window.location.href='signin.html'">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQVmU8Ga5dTSb_EAjDrcnFfltWnscRdjJtpXRnvkC3kjGBaBKFY5lVCYPb-&s=10" alt="تسجيل دخول">
+            <span>تسجيل الدخول</span>
+        </div>
+    </div>
+</body>
+</html>
