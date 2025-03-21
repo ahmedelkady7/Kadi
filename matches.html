@@ -64,6 +64,7 @@
             font-size: 14px;
             color: #FFD700;
         }
+
     </style>
 </head>
 <body>
@@ -99,19 +100,7 @@
                     matchCard.className = 'match-card';
 
                     matchCard.onclick = () => {
-                        // **تشفير البيانات وتخزينها في Local Storage**
-                        localStorage.setItem("videoURL", btoa(data.channel_url)); 
-                        localStorage.setItem("videoName", matchName);
-                        localStorage.setItem("team1", data.team1);
-                        localStorage.setItem("team2", data.team2);
-                        localStorage.setItem("img1", data.img1);
-                        localStorage.setItem("img2", data.img2);
-                        localStorage.setItem("cup", data.cup);
-                        localStorage.setItem("matchDate", data.date);
-                        localStorage.setItem("matchTime", data.time);
-
-                        // الانتقال إلى صفحة المشغل
-                        window.location.href = "player.html";
+                        window.location.href = `player.html?url=${encodeURIComponent(data.channel_url)}&name=${encodeURIComponent(matchName)}`;
                     };
 
                     matchCard.innerHTML = `
