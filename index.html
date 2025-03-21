@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kadi Live</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');
 
@@ -43,11 +46,11 @@
         }
 
         .splash-screen img {
-            width: 150px; /* حجم اللوجو */
+            width: 150px;
             height: auto;
         }
 
-        /* شريط البحث والصورة */
+        /* شريط البحث وصورة الحساب */
         .top-bar {
             display: flex;
             justify-content: space-between;
@@ -179,8 +182,8 @@
             <input type="text" placeholder="ابحث هنا..." onclick="goToSearch()">
             <i class="fas fa-search" onclick="goToSearch()"></i>
         </div>
-        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS0ubrSkl1d_IynipR3k8uXXpciep-_u6QBtQZh1ExoeYTkjg_dEYuvOgs&s=10" 
-             alt="Account" class="account-icon" onclick="goToAccount()">
+        <img id="accountImage" class="account-icon" onclick="goToAccount()" 
+             src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS0ubrSkl1d_IynipR3k8uXXpciep-_u6QBtQZh1ExoeYTkjg_dEYuvOgs&s=10">
     </div>
 
     <div class="container">
@@ -208,6 +211,38 @@
     </div>
 
     <script>
+        // تكوين Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyAI21TvGX8jjTbEIDww5GEKcxM9zL6Gkn8",
+            authDomain: "ak-sport-a985e.firebaseapp.com",
+            databaseURL: "https://ak-sport-a985e-default-rtdb.firebaseio.com/",
+            projectId: "ak-sport-a985e",
+            appId: "1:922662521404:android:be257019ae9c69f6ddd139"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
+        function checkUser() {
+            let userId = localStorage.getItem("userID");
+            if (userId) {
+                db.ref("account/" + userId).once("value").then(snapshot => {
+                    if (snapshot.exists()) {
+                        let userData = snapshot.val();
+                        document.getElementById("accountImage").src = userData.img || "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS0ubrSkl1d_IynipR3k8uXXpciep-_u6QBtQZh1ExoeYTkjg_dEYuvOgs&s=10";
+                        document.getElementById("loginBar").style.display = "none";
+                    }
+                }).catch(error => console.error("فشل تحميل بيانات الحساب:", error));
+            }
+        }
+
+        window.onload = function() {
+            setTimeout(function() {
+                document.querySelector('.splash-screen').style.display = 'none';
+            }, 3000);
+            checkUser();
+        };
+
         function goToSearch() {
             window.location.href = "search.html";
         }
@@ -215,19 +250,6 @@
         function goToAccount() {
             window.location.href = "account.html";
         }
-
-        // إخفاء شاشة اللوجو بعد 3 ثواني
-        window.onload = function() {
-            setTimeout(function() {
-                document.querySelector('.splash-screen').style.display = 'none';
-            }, 3000);
-
-            // التحقق من حالة تسجيل الدخول (محاكاة)
-            let isLoggedIn = false; // اجعلها true إذا كان المستخدم مسجلاً الدخول
-            if (isLoggedIn) {
-                document.getElementById("loginBar").style.display = "none";
-            }
-        };
     </script>
 
 </body>
