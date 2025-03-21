@@ -111,13 +111,15 @@
             appId: "1:922662521404:android:be257019ae9c69f6ddd139"
         };
 
+        // تهيئة Firebase
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const db = firebase.database().ref("account");
 
         let isSignUp = false;
-        let selectedAvatar = "https://example.com/default-avatar.png";
+        let selectedAvatar = "https://example.com/default-avatar.png"; // Avatar مبدئي
 
+        // التبديل بين النماذج (تسجيل دخول / إنشاء حساب)
         function toggleForm() {
             isSignUp = !isSignUp;
             document.getElementById("formTitle").textContent = isSignUp ? "إنشاء حساب" : "تسجيل الدخول";
@@ -125,12 +127,14 @@
             document.getElementById("nameField").style.display = isSignUp ? "block" : "none";
         }
 
+        // اختيار الصورة الرمزية
         function selectAvatar(img) {
             document.querySelectorAll(".avatar-options img").forEach(img => img.classList.remove("selected"));
             img.classList.add("selected");
             selectedAvatar = img.src;
         }
 
+        // التعامل مع تسجيل الدخول وإنشاء الحساب
         function handleAuth() {
             const email = document.getElementById("email").value;
             const password = document.getElementById("password").value;
