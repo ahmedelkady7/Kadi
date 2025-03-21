@@ -10,7 +10,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
-    
+
     <style>
         * {
             margin: 0;
@@ -102,6 +102,7 @@
     </div>
 
     <script>
+        // إعداد Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyAI21TvGX8jjTbEIDww5GEKcxM9zL6Gkn8",
             authDomain: "ak-sport-a985e.firebaseapp.com",
@@ -147,15 +148,36 @@
                             bio: "",
                             time: new Date().toLocaleString()
                         });
+
+                        // حفظ UID في Local Storage
+                        localStorage.setItem("userUID", user.uid);
+
+                        // التوجيه إلى الصفحة الرئيسية فورًا
                         window.location.href = "index.html";
                     })
                     .catch(error => alert(error.message));
             } else {
                 auth.signInWithEmailAndPassword(email, password)
-                    .then(() => window.location.href = "index.html")
+                    .then(userCredential => {
+                        // حفظ UID في Local Storage عند تسجيل الدخول
+                        localStorage.setItem("userUID", userCredential.user.uid);
+
+                        // التوجيه إلى الصفحة الرئيسية فورًا
+                        window.location.href = "index.html";
+                    })
                     .catch(error => alert(error.message));
             }
         }
+
+        // التحقق مما إذا كان المستخدم مسجلاً بالفعل
+        function checkUserSession() {
+            const storedUID = localStorage.getItem("userUID");
+            if (storedUID) {
+                window.location.href = "index.html";
+            }
+        }
+
+        window.onload = checkUserSession;
     </script>
 
 </body>
