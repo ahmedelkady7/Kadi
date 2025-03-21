@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>مشاهدة البث المباشر</title>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');
 
@@ -74,7 +76,7 @@
 
     <div class="video-container">
         <video id="videoPlayer" controls autoplay>
-            <source id="videoSource" src="" type="application/x-mpegURL">
+            <source src="" type="application/x-mpegURL">
             متصفحك لا يدعم تشغيل الفيديو.
         </video>
     </div>
@@ -87,34 +89,33 @@
     </div>
 
     <script>
+        const encryptionKey = "MySuperSecretKey123!"; // استخدم مفتاحًا أقوى في التطبيق الحقيقي
+
+        // دالة فك التشفير باستخدام AES-256
+        function decryptData(encryptedText) {
+            const bytes = CryptoJS.AES.decrypt(encryptedText, encryptionKey);
+            return bytes.toString(CryptoJS.enc.Utf8);
+        }
+
         // جلب البيانات من Local Storage
-        const videoURL = localStorage.getItem("liveURL");
-        const channelName = localStorage.getItem("liveName");
-        const channelImage = localStorage.getItem("liveImg");
+        const encryptedURL = localStorage.getItem("streamURL");
+        const channelName = localStorage.getItem("channelName");
+        const channelImage = localStorage.getItem("channelImage");
 
-        // تعيين الرابط إلى مشغل الفيديو
-        if (videoURL) {
-            document.getElementById('videoSource').src = videoURL;
-            document.getElementById('videoPlayer').load();
-        } else {
-            console.error("⚠ لا يوجد رابط بث مباشر محفوظ.");
+        if (encryptedURL) {
+            const streamURL = decryptData(encryptedURL);
+            document.getElementById("videoPlayer").src = streamURL;
         }
 
-        // تعيين اسم القناة
         if (channelName) {
-            document.getElementById('channelName').textContent = channelName;
+            document.getElementById("channelName").textContent = channelName;
         }
 
-        // تعيين صورة القناة إذا كانت متاحة
         if (channelImage) {
-            document.getElementById('channelImage').src = channelImage;
-            document.getElementById('channelLogo').style.display = 'block';
+            document.getElementById("channelImage").src = channelImage;
+            document.getElementById("channelLogo").style.display = 'block';
         }
 
-        // حذف البيانات بعد تحميلها لمنع إعادة استخدامها
-        localStorage.removeItem("liveURL");
-        localStorage.removeItem("liveName");
-        localStorage.removeItem("liveImg");
     </script>
 
 </body>
